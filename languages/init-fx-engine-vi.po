@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Init FX Engine 1.0\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Init FX Engine Settings"
+msgstr "Cài đặt Init FX Engine"
+
+msgid "Firework"
+msgstr "Pháo hoa"
+
+msgid "Starlight Burst"
+msgstr "Bùng nổ sao"
+
+msgid "Emoji Rain"
+msgstr "Emoji rơi"
+
+msgid "Format: keyword:emoji, keyword:emoji"
+msgstr "Định dạng: từ khóa:emoji, từ khóa:emoji"
+
+msgid "Cannon Blast"
+msgstr "Phát pháo"
+
+msgid "Heart Rain"
+msgstr "Mưa trái tim"
+
+msgid "School Pride"
+msgstr "Niềm tự hào trường học"
+
+msgid "Celebration Burst"
+msgstr "Vụ nổ ăn mừng"
+
+msgid "Preview"
+msgstr "Xem thử"
+
+msgid "Effect Preview:"
+msgstr "Xem trước hiệu ứng:"
+
+msgid "Click any “Preview” button to see it in action."
+msgstr "Nhấn vào nút “Xem thử” để thấy hiệu ứng hoạt động."
+
+msgid "Enable snowfall effect on site"
+msgstr "Bật hiệu ứng tuyết rơi trên trang"
+
+msgid "Snowfall Effect"
+msgstr "Hiệu ứng tuyết rơi"
+
+msgid "Auto schedule (Dec 20 – Dec 31)"
+msgstr "Tự động lên lịch (20/12 – 31/12)"
+
+msgid "Custom schedule"
+msgstr "Lịch tùy chỉnh"
+
+msgid "Start Date"
+msgstr "Ngày bắt đầu"
+
+msgid "End Date"
+msgstr "Ngày kết thúc"
+
+msgid "Grayscale (Turn off full page color)"
+msgstr "Grayscale (Tắt màu sắc toàn trang)"
+
+msgid "Enable grayscale effect on site"
+msgstr "Bật hiệu ứng grayscale trên trang"
+
+msgid "Always on"
+msgstr "Luôn bật"
