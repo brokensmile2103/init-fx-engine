@@ -8,43 +8,81 @@ msgstr ""
 
 msgid "Init FX Engine Settings"
 msgstr ""
+
+msgid "Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!"
+msgstr ""
+
 msgid "Firework"
 msgstr ""
+
 msgid "Starlight Burst"
 msgstr ""
+
 msgid "Emoji Rain"
 msgstr ""
+
 msgid "Format: keyword:emoji, keyword:emoji"
 msgstr ""
+
 msgid "Cannon Blast"
 msgstr ""
+
 msgid "Heart Rain"
 msgstr ""
+
 msgid "School Pride"
 msgstr ""
+
 msgid "Celebration Burst"
 msgstr ""
+
 msgid "Preview"
 msgstr ""
+
 msgid "Effect Preview:"
 msgstr ""
+
 msgid "Click any “Preview” button to see it in action."
 msgstr ""
+
 msgid "Enable snowfall effect on site"
 msgstr ""
+
 msgid "Snowfall Effect"
 msgstr ""
+
 msgid "Auto schedule (Dec 20 – Dec 31)"
 msgstr ""
+
 msgid "Custom schedule"
 msgstr ""
+
 msgid "Start Date"
 msgstr ""
+
 msgid "End Date"
 msgstr ""
+
 msgid "Grayscale (Turn off full page color)"
 msgstr ""
+
 msgid "Enable grayscale effect on site"
 msgstr ""
+
 msgid "Always on"
+msgstr ""
+
+msgid "Preloader (Loading screen)"
+msgstr ""
+
+msgid "Enable loading screen before page fully loads"
+msgstr ""
+
+msgid "Style"
+msgstr ""
+
+msgid "Background Color"
+msgstr ""
+
+msgid "Use a single color or comma-separated values for gradient."
 msgstr ""

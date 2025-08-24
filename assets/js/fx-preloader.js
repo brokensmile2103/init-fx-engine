@@ -15,8 +15,16 @@
         const bg = config.bg || '#ffffff';
 
         const isDark = (color) => {
+            // Đảm bảo document.body tồn tại
+            if (!document.body) {
+                return false; // fallback nếu body chưa có
+            }
+
             const dummy = document.createElement('div');
             dummy.style.color = color;
+            dummy.style.position = 'absolute';
+            dummy.style.visibility = 'hidden';
+            
             document.body.appendChild(dummy);
             const computed = getComputedStyle(dummy).color;
             document.body.removeChild(dummy);
@@ -217,6 +225,13 @@ body.fx-loaded #init-fx-preloader { opacity: 0; }
         document.head.appendChild(styleEl);
 
         function run() {
+            // Đảm bảo document.body tồn tại trước khi thao tác
+            if (!document.body) {
+                // Nếu body chưa có, chờ một chút rồi thử lại
+                setTimeout(run, 10);
+                return;
+            }
+
             const startTime = performance.now();
             let preloadDiv = document.getElementById('init-fx-preloader');
 
@@ -278,13 +293,21 @@ body.fx-loaded #init-fx-preloader { opacity: 0; }
                 const remainingVisibleTime = Math.max(0, MIN_SHOW_TIME - elapsed);
 
                 setTimeout(() => {
-                    document.body.classList.add('fx-loaded');
+                    if (document.body) {
+                        document.body.classList.add('fx-loaded');
+                    }
 
                     setTimeout(() => {
-                        preloadDiv.classList.add('fade-out-complete');
-                        preloadDiv.remove();
-                        styleEl.remove();
-                        document.body.classList.remove('fx-loaded');
+                        if (preloadDiv && preloadDiv.parentNode) {
+                            preloadDiv.classList.add('fade-out-complete');
+                            preloadDiv.remove();
+                        }
+                        if (styleEl && styleEl.parentNode) {
+                            styleEl.remove();
+                        }
+                        if (document.body) {
+                            document.body.classList.remove('fx-loaded');
+                        }
                     }, FADE_OUT_TIME);
                 }, Math.max(DELAY_BEFORE_FADE, remainingVisibleTime));
             }

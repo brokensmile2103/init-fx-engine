@@ -9,6 +9,9 @@ msgstr ""
 msgid "Init FX Engine Settings"
 msgstr "Cài đặt Init FX Engine"
 
+msgid "Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!"
+msgstr "Thêm hiệu ứng trực quan sinh động như pháo hoa, mưa emoji, hay tuyết rơi — được kích hoạt bởi bình luận, từ khóa hoặc dịp lễ. Để trang WordPress của bạn trở nên sống động!"
+
 msgid "Firework"
 msgstr "Pháo hoa"
 
@@ -68,3 +71,18 @@ msgstr "Bật hiệu ứng grayscale trên trang"
 
 msgid "Always on"
 msgstr "Luôn bật"
+
+msgid "Preloader (Loading screen)"
+msgstr "Preloader (Màn hình tải)"
+
+msgid "Enable loading screen before page fully loads"
+msgstr "Bật màn hình tải trước khi trang tải hoàn tất"
+
+msgid "Style"
+msgstr "Kiểu dáng"
+
+msgid "Background Color"
+msgstr "Màu nền"
+
+msgid "Use a single color or comma-separated values for gradient."
+msgstr "Dùng một màu hoặc nhiều màu cách nhau bằng dấu phẩy để tạo gradient."

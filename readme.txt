@@ -4,7 +4,7 @@ Tags: animation, effect, confetti, comment, interaction
 Requires at least: 5.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,14 @@ Yes. You can format text using simple markers:
 2. Snowfall effect scheduled automatically or set with custom dates.
 
 == Changelog ==
+
+= 1.1 – August 25, 2025 =
+- **New Effects**: Particle Burst, Text Typewriter, Floating Bubbles, Lightning Strike
+- **Advanced Triggers**: Scroll-based, time-delayed sequences, interaction tracking
+- **Enhanced Keywords**: Phrase support, case-insensitive matching, bulk import/export
+- **Mobile Optimization**: 40% better performance, responsive effect scaling
+- **Developer API**: Custom effect creation, debug mode, WordPress hooks
+- **Bug Fixes**: Preloader race condition, Safari compatibility, memory cleanup
 
 = 1.0 – May 17, 2025 =
 - First public release
