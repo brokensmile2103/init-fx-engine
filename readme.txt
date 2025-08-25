@@ -4,7 +4,7 @@ Tags: animation, effect, confetti, comment, interaction
 Requires at least: 5.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,7 +68,16 @@ Yes. You can format text using simple markers:
 
 == Changelog ==
 
-= 1.1 – August 25, 2025 =
+= 1.2 – August 25, 2025 =
+- **Critical Fix**: Resolved preloader flash/flicker issue during page load
+- **Performance**: Eliminated race conditions in asset loading sequence
+- **Compatibility**: Enhanced support for themes without `wp_body_open` hook
+- **Stability**: Fixed "Cannot read properties of null" errors in early execution
+- **Code Quality**: Refactored preloader timing mechanism for WordPress standards compliance
+- **User Experience**: Smoother transitions with anti-flash CSS critical loading
+- **Developer**: Improved error handling and graceful degradation fallbacks
+
+= 1.1 – August 24, 2025 =
 - **New Effects**: Particle Burst, Text Typewriter, Floating Bubbles, Lightning Strike
 - **Advanced Triggers**: Scroll-based, time-delayed sequences, interaction tracking
 - **Enhanced Keywords**: Phrase support, case-insensitive matching, bulk import/export
