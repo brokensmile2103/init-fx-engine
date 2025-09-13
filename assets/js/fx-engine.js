@@ -211,96 +211,239 @@ function replaceFXKeywordsInDOM(root = document.body) {
     });
 }
 
+// enhanceInlineFormatting — range-based spoiler wrapping + smart CSS + i18n
 function enhanceInlineFormatting(root = document.body) {
-    const rules = [
-        { 
-            // *text* - bold (chỉ cần 1 trong 2 đầu có khoảng trắng, không có space liền sau/trước dấu)
-            regex: /((?<=^|\s)\*([^\s*][^*]*?[^\s*]|\S)\*)|(\*([^\s*][^*]*?[^\s*]|\S)\*(?=\s|$))/g, 
-            tag: 'strong',
-            captureGroup: [2, 4] // Group 2 hoặc 4 chứa content
-        },
-        { 
-            // `code` - code formatting (em tag thay vì code để tương thích)
-            regex: /((?<=^|\s)`([^\s`][^`]*?[^\s`]|\S)`)|(`([^\s`][^`]*?[^\s`]|\S)`(?=\s|$))/g, 
-            tag: 'em',
-            captureGroup: [2, 4]
-        },
-        { 
-            // ~text~ - strikethrough
-            regex: /((?<=^|\s)~([^\s~][^~]*?[^\s~]|\S)~)|(~([^\s~][^~]*?[^\s~]|\S)~(?=\s|$))/g, 
-            tag: 'del',
-            captureGroup: [2, 4]
-        },
-        { 
-            // ^text^ - highlight
-            regex: /((?<=^|\s)\^([^\s^][^^]*?[^\s^]|\S)\^)|(\^([^\s^][^^]*?[^\s^]|\S)\^(?=\s|$))/g, 
-            tag: 'mark',
-            captureGroup: [2, 4]
-        },
-        { 
-            // _text_ - custom highlight
-            regex: /((?<=^|\s)_([^\s_][^_]*?[^\s_]|\S)_)|(_([^\s_][^_]*?[^\s_]|\S)_(?=\s|$))/g, 
-            tag: 'span', 
-            className: 'init-fx-highlight-text',
-            captureGroup: [2, 4]
+    const I18N = (window.INIT_FX && window.INIT_FX.i18n) || {};
+    const SPOILER_LABEL = I18N.tap_to_reveal || 'Tap to reveal';
+
+    function ensureInlineAndSpoilerCSS(rootEl) {
+        // highlight only if exists
+        if (rootEl.querySelector('.init-fx-highlight-text') && !document.getElementById('fx-highlight-style')) {
+            const style = document.createElement('style');
+            style.id = 'fx-highlight-style';
+            style.textContent = `
+                .init-fx-highlight-text {
+                    background-image: linear-gradient(120deg, rgba(156,255,0,.7) 0, rgba(156,255,0,.7) 100%);
+                    background-repeat: no-repeat;
+                    background-size: 100% .5em;
+                    background-position: 0 100%;
+                }
+            `;
+            document.head.appendChild(style);
         }
+        // spoiler only if '||' present or wrapper exists
+        if ((rootEl.innerHTML.includes('||') || rootEl.querySelector('.fx-spoiler')) && !document.getElementById('fx-spoiler-style')) {
+            const style = document.createElement('style');
+            style.id = 'fx-spoiler-style';
+            const label = JSON.stringify(SPOILER_LABEL);
+            style.textContent = `
+                .fx-spoiler {
+                    position: relative;
+                    display: inline-block;
+                    cursor: pointer;
+                }
+                .fx-spoiler .fx-spoiler-content {
+                    transition: filter .25s ease, opacity .25s ease;
+                }
+                .fx-spoiler.is-hidden .fx-spoiler-content {
+                    filter: blur(6px) saturate(.7);
+                    opacity: .9;
+                }
+                .fx-spoiler.is-hidden::after {
+                    content: ${label};
+                    position: absolute;
+                    inset: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(0,0,0,.35);
+                    color: #fff;
+                    font-size: 12px;
+                    letter-spacing: .2px;
+                    border-radius: 4px;
+                    pointer-events: none;
+                    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+                    user-select: none;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    const inlineRules = [
+        { regex: /((?<=^|\s)\*([^\s*][^*]*?[^\s*]|\S)\*)|(\*([^\s*][^*]*?[^\s*]|\S)\*(?=\s|$))/g, tag: 'strong', captureGroup: [2, 4] },
+        { regex: /((?<=^|\s)`([^\s`][^`]*?[^\s`]|\S)`)|(`([^\s`][^`]*?[^\s`]|\S)`(?=\s|$))/g, tag: 'em',     captureGroup: [2, 4] },
+        { regex: /((?<=^|\s)~([^\s~][^~]*?[^\s~]|\S)~)|(~([^\s~][^~]*?[^\s~]|\S)~(?=\s|$))/g,               tag: 'del',    captureGroup: [2, 4] },
+        { regex: /((?<=^|\s)\^([^\s^][^^]*?[^\s^]|\S)\^)|(\^([^\s^][^^]*?[^\s^]|\S)\^(?=\s|$))/g,           tag: 'mark',   captureGroup: [2, 4] },
+        { regex: /((?<=^|\s)_([^\s_][^_]*?[^\s_]|\S)_)|(_([^\s_][^_]*?[^\s_]|\S)_(?=\s|$))/g,               tag: 'span',   className: 'init-fx-highlight-text', captureGroup: [2, 4] }
     ];
 
-    root.querySelectorAll('*:not(script):not(style):not(pre):not(a)').forEach(node => {
-        node.childNodes.forEach(child => {
-            if (child.nodeType !== 3) return;
+    const isSkippable = (el) => el.matches('script,style,pre,code');
 
-            let text = child.textContent;
-            let changed = false;
-            let frag = document.createDocumentFragment();
-            let cursor = 0;
+    function applyInlineRulesToTextNode(textNode) {
+        let text = textNode.nodeValue;
+        let changed = false;
+        const frag = document.createDocumentFragment();
+        let cursor = 0;
 
-            while (cursor < text.length) {
-                let earliest = null;
-                let matchedRule = null;
-
-                for (const rule of rules) {
-                    rule.regex.lastIndex = cursor;
-                    const match = rule.regex.exec(text);
-                    if (match && (!earliest || match.index < earliest.index)) {
-                        earliest = match;
-                        matchedRule = rule;
-                    }
+        while (cursor < text.length) {
+            let earliest = null;
+            let matchedRule = null;
+            for (const rule of inlineRules) {
+                rule.regex.lastIndex = cursor;
+                const match = rule.regex.exec(text);
+                if (match && (!earliest || match.index < earliest.index)) {
+                    earliest = match;
+                    matchedRule = rule;
                 }
+            }
+            if (!earliest) {
+                frag.appendChild(document.createTextNode(text.slice(cursor)));
+                break;
+            }
+            if (earliest.index > cursor) {
+                frag.appendChild(document.createTextNode(text.slice(cursor, earliest.index)));
+            }
+            let content = matchedRule.captureGroup
+                ? (earliest[matchedRule.captureGroup[0]] || earliest[matchedRule.captureGroup[1]])
+                : earliest[1];
+            const el = document.createElement(matchedRule.tag);
+            if (matchedRule.className) el.className = matchedRule.className;
+            el.textContent = content;
+            frag.appendChild(el);
+            cursor = earliest.index + earliest[0].length;
+            changed = true;
+        }
 
-                if (!earliest) {
-                    frag.appendChild(document.createTextNode(text.slice(cursor)));
-                    break;
+        if (changed) {
+            textNode.parentNode.replaceChild(frag, textNode);
+        }
+    }
+
+    // Collect '||' tokens (ordered) inside container
+    function collectSpoilerTokens(container) {
+        const tokens = [];
+        const walker = document.createTreeWalker(
+            container,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: (node) => {
+                    const p = node.parentNode;
+                    if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.fx-spoiler')) return NodeFilter.FILTER_REJECT;
+                    if (isSkippable(p)) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
                 }
+            }
+        );
+        let n;
+        while ((n = walker.nextNode())) {
+            let s = n.nodeValue;
+            let idx = s.indexOf('||');
+            while (idx !== -1) {
+                tokens.push({ node: n, offset: idx });
+                idx = s.indexOf('||', idx + 2);
+            }
+        }
+        return tokens;
+    }
 
-                // Thêm text trước match
-                if (earliest.index > cursor) {
-                    frag.appendChild(document.createTextNode(text.slice(cursor, earliest.index)));
-                }
+    // Range-based wrapper: wraps one pair at a time, loops until no pair
+    function wrapSpoilersInContainer(container) {
+        if (isSkippable(container)) return;
 
-                // Xử lý capture group cho các rule mới
-                let content;
-                if (matchedRule.captureGroup) {
-                    // Tìm group nào có content (group 2 hoặc 4)
-                    content = earliest[matchedRule.captureGroup[0]] || earliest[matchedRule.captureGroup[1]];
-                } else {
-                    content = earliest[1];
-                }
+        // process children first
+        Array.from(container.children).forEach(child => wrapSpoilersInContainer(child));
 
-                const el = document.createElement(matchedRule.tag);
-                if (matchedRule.className) el.className = matchedRule.className;
-                el.textContent = content;
-                frag.appendChild(el);
+        while (true) {
+            const tokens = collectSpoilerTokens(container);
+            if (tokens.length < 2) break;
 
-                cursor = earliest.index + earliest[0].length;
-                changed = true;
+            const startTok = tokens[0];
+            const endTok = tokens[1];
+
+            // Create range [after start '||', before end '||']
+            const range = document.createRange();
+            range.setStart(startTok.node, startTok.offset + 2);
+            range.setEnd(endTok.node, endTok.offset);
+
+            // Extract contents between tokens
+            const contents = range.extractContents();
+
+            // Remove tokens themselves
+            // - start token: remove from startTok.node (characters at startTok.offset..+2)
+            const sText = startTok.node.nodeValue || '';
+            startTok.node.nodeValue = sText.slice(0, startTok.offset) + sText.slice(startTok.offset + 2);
+
+            // - end token: after extraction, endTok.node now starts right at original end offset
+            //   so remove FIRST 2 chars
+            const eText = endTok.node.nodeValue || '';
+            if (eText.startsWith('||')) {
+                endTok.node.nodeValue = eText.slice(2);
+            } else {
+                // fallback: remove at recorded offset if still present
+                endTok.node.nodeValue = eText.slice(0, endTok.offset) + eText.slice(endTok.offset + 2);
             }
 
-            if (changed) {
-                node.replaceChild(frag, child);
+            // Build wrapper and insert at the collapsed range start
+            const wrapper = document.createElement('div');
+            wrapper.className = 'fx-spoiler is-hidden';
+            wrapper.setAttribute('role', 'button');
+            wrapper.setAttribute('tabindex', '0');
+            wrapper.setAttribute('aria-label', SPOILER_LABEL);
+
+            const inner = document.createElement('div');
+            inner.className = 'fx-spoiler-content';
+            inner.appendChild(contents);
+            wrapper.appendChild(inner);
+
+            // Insert wrapper where the range used to be
+            range.insertNode(wrapper);
+
+            // Clean up range
+            range.detach();
+        }
+    }
+
+    function walkAndApply(container) {
+        wrapSpoilersInContainer(container);
+
+        const treeWalker = document.createTreeWalker(
+            container,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: (node) => {
+                    const p = node.parentNode;
+                    if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.fx-spoiler')) return NodeFilter.FILTER_REJECT;
+                    if (isSkippable(p)) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            }
+        );
+        const textNodes = [];
+        let current;
+        while ((current = treeWalker.nextNode())) textNodes.push(current);
+        textNodes.forEach(applyInlineRulesToTextNode);
+    }
+
+    ensureInlineAndSpoilerCSS(root);
+    walkAndApply(root);
+
+    if (!root.__fxSpoilerBound) {
+        root.addEventListener('click', (e) => {
+            const target = e.target.closest('.fx-spoiler.is-hidden');
+            if (!target) return;
+            target.classList.remove('is-hidden');
+        });
+        root.addEventListener('keydown', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('fx-spoiler')) {
+                e.preventDefault();
+                e.target.classList.remove('is-hidden');
             }
         });
-    });
+        root.__fxSpoilerBound = true;
+    }
 }
 
 function injectHighlightStyleIfNeeded() {
@@ -325,8 +468,12 @@ function escapeRegExp(string) {
 
 document.addEventListener('DOMContentLoaded', () => {
     replaceFXKeywordsInDOM();
-    enhanceInlineFormatting();
-    injectHighlightStyleIfNeeded();
+
+    const inlinefmtEnabled = !(window.INIT_FX && window.INIT_FX.inlinefmt && window.INIT_FX.inlinefmt.enabled === false);
+    if (inlinefmtEnabled) {
+        enhanceInlineFormatting();
+        injectHighlightStyleIfNeeded();
+    }
 
     document.querySelectorAll('.fx-shortcode').forEach(el => {
         const fx = el.dataset.effect;

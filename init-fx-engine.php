@@ -3,7 +3,7 @@
  * Plugin Name: Init FX Engine
  * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 1.2
+ * Version: 1.3
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.2' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.3' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
@@ -53,6 +53,22 @@ function init_plugin_suite_fx_engine_enqueue_scripts() {
         true
     );
 
+    $inlinefmt = get_option('init_plugin_suite_fx_engine_inlinefmt', [
+        'enabled' => true,
+    ]);
+
+    $i18n = [
+        'tap_to_reveal' => __('Tap to reveal', 'init-fx-engine'),
+    ];
+
+    wp_add_inline_script(
+        'init-plugin-suite-fx-engine',
+        'window.INIT_FX = window.INIT_FX || {};
+         window.INIT_FX.inlinefmt = ' . wp_json_encode($inlinefmt) . ';
+         window.INIT_FX.i18n = ' . wp_json_encode($i18n) . ';',
+        'before'
+    );
+
     $raw_keywords = get_option('init_plugin_suite_fx_engine_keywords', []);
     $mapped = [];
 
@@ -82,16 +98,17 @@ function init_plugin_suite_fx_engine_enqueue_scripts() {
 }
 
 /**
- * PRELOADER - Anti-flash solution
+ * PRELOADER - Anti-flash solution (FIXED VERSION)
  * - Che content ngay từ đầu bằng CSS critical
  * - Preloader show immediately, content hidden cho đến khi ready
+ * - Fixed z-index và visibility issues
  */
-
 add_action('wp_head', function () {
     $preloader = get_option('init_plugin_suite_fx_engine_preloader', [
-        'enabled' => false,
-        'style'   => 'dot',
-        'bg'      => '#ffffff'
+        'enabled'      => false,
+        'style'        => 'dot',
+        'bg'           => '#ffffff',
+        'session_once' => false
     ]);
 
     if (empty($preloader['enabled'])) {
@@ -101,7 +118,7 @@ add_action('wp_head', function () {
     $bg = esc_attr($preloader['bg']);
     $bgCSS = strpos($bg, ',') !== false ? "linear-gradient(to right, {$bg})" : $bg;
     
-    // Critical CSS để che content ngay lập tức
+    // Critical CSS để che content ngay lập tức - FIXED VERSION
     ?>
     <style id="init-fx-critical-preloader">
         html.init-fx-preloading {
@@ -109,7 +126,16 @@ add_action('wp_head', function () {
         }
         html.init-fx-preloading body {
             overflow: hidden !important;
-            visibility: hidden !important; /* Ẩn tất cả content */
+        }
+        
+        html.init-fx-preloading body {
+            overflow: hidden !important;
+            visibility: hidden !important;
+            transition: visibility 0.3s ease !important;
+        }
+        
+        html:not(.init-fx-preloading) body {
+            visibility: visible !important;
         }
         
         html.init-fx-preloading #init-fx-preloader {
@@ -124,18 +150,73 @@ add_action('wp_head', function () {
             width: 100vw !important;
             height: 100vh !important;
             background: <?php echo esc_attr($bgCSS); ?> !important;
-            z-index: 2147483647 !important; /* Max z-index */
+            z-index: 999999999 !important; /* Fixed z-index */
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.6s ease !important;
+            opacity: 1;
+            transition: opacity 0.8s cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0s linear 0.8s !important;
         }
         
-        #init-fx-preloader.fade-out {
+        @keyframes preloaderFadeOut {
+            0% { 
+                opacity: 1;
+                visibility: visible;
+            }
+            95% {
+                opacity: 0.05;
+                visibility: visible;
+            }
+            100% { 
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        #init-fx-preloader.fx-animate-out {
+            animation: preloaderFadeOut 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
+        }
+
+        #init-fx-preloader {
+            z-index: 999999999 !important;
+        }
+
+        html.init-fx-preloading #wpadminbar {
+            visibility: hidden !important;
             opacity: 0 !important;
             pointer-events: none !important;
+        }
+        
+        @keyframes preloaderFadeOut {
+            0% { 
+                opacity: 1;
+                visibility: visible;
+                transform: scale(1);
+            }
+            70% {
+                opacity: 0.3;
+                visibility: visible;
+                transform: scale(1.02);
+            }
+            100% { 
+                opacity: 0;
+                visibility: hidden;
+                transform: scale(1);
+            }
+        }
+        
+        #init-fx-preloader.fx-animate-out {
+            animation: preloaderFadeOut 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+        }
+
+        #init-fx-preloader * {
+            z-index: inherit !important;
+        }
+
+        html.init-fx-preloading #wpadminbar {
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
     </style>
     
@@ -146,21 +227,44 @@ add_action('wp_head', function () {
             window.INIT_FX = window.INIT_FX || {};
             window.INIT_FX.preloader = <?php echo wp_json_encode($preloader); ?>;
             
-            function createPreloader() {
-                if (document.body) {
-                    var existing = document.getElementById('init-fx-preloader');
-                    if (!existing) {
-                        var preloader = document.createElement('div');
-                        preloader.id = 'init-fx-preloader';
-                        preloader.setAttribute('data-style', '<?php echo esc_js($preloader['style']); ?>');
-                        document.body.appendChild(preloader);
-                    }
-                } else {
-                    setTimeout(createPreloader, 5);
+            function createPreloaderImmediately() {
+                var container = document.body || document.documentElement;
+                
+                var existing = document.getElementById('init-fx-preloader');
+                if (!existing && container) {
+                    var preloader = document.createElement('div');
+                    preloader.id = 'init-fx-preloader';
+                    preloader.setAttribute('data-style', '<?php echo esc_js($preloader['style']); ?>');
+                    
+                    preloader.style.cssText = `
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 100vw !important;
+                        height: 100vh !important;
+                        background: <?php echo esc_js($bgCSS); ?> !important;
+                        z-index: 999999999 !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                    `;
+                    
+                    container.appendChild(preloader);
+                    return true;
                 }
+                return false;
             }
             
-            createPreloader();
+            if (!createPreloaderImmediately()) {
+                var retryCount = 0;
+                var retryInterval = setInterval(function() {
+                    if (createPreloaderImmediately() || retryCount++ > 20) {
+                        clearInterval(retryInterval);
+                    }
+                }, 10);
+            }
         })();
     </script>
     <?php
@@ -169,7 +273,10 @@ add_action('wp_head', function () {
 // Enqueue JS để xử lý preloader animation
 add_action('wp_enqueue_scripts', function () {
     $preloader = get_option('init_plugin_suite_fx_engine_preloader', [
-        'enabled' => false
+        'enabled'      => false,
+        'style'        => 'dot',
+        'bg'           => '#ffffff',
+        'session_once' => false, // thêm default luôn
     ]);
 
     if (empty($preloader['enabled'])) {
@@ -182,6 +289,14 @@ add_action('wp_enqueue_scripts', function () {
         [],
         INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
         false // Load sớm ở header
+    );
+
+    // Truyền settings xuống JS
+    wp_add_inline_script(
+        'init-plugin-suite-fx-preloader',
+        'window.INIT_FX = window.INIT_FX || {};
+         window.INIT_FX.preloader = ' . wp_json_encode($preloader) . ';',
+        'before'
     );
 });
 

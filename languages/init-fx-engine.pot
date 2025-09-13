@@ -86,3 +86,18 @@ msgstr ""
 
 msgid "Use a single color or comma-separated values for gradient."
 msgstr ""
+
+msgid "Only show on first visit in a session"
+msgstr ""
+
+msgid "Inline Formatting"
+msgstr ""
+
+msgid "Apply inline formatting in text"
+msgstr ""
+
+msgid "When enabled, the engine will parse simple inline markup in outputs."
+msgstr ""
+
+msgid "Tap to reveal"
+msgstr ""

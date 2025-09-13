@@ -9,6 +9,9 @@ msgstr ""
 msgid "Init FX Engine Settings"
 msgstr "Cài đặt Init FX Engine"
 
+msgid "Init FX Engine"
+msgstr "Init FX Engine"
+
 msgid "Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!"
 msgstr "Thêm hiệu ứng trực quan sinh động như pháo hoa, mưa emoji, hay tuyết rơi — được kích hoạt bởi bình luận, từ khóa hoặc dịp lễ. Để trang WordPress của bạn trở nên sống động!"
 
@@ -86,3 +89,18 @@ msgstr "Màu nền"
 
 msgid "Use a single color or comma-separated values for gradient."
 msgstr "Dùng một màu hoặc nhiều màu cách nhau bằng dấu phẩy để tạo gradient."
+
+msgid "Only show on first visit in a session"
+msgstr "Chỉ hiển thị ở lần truy cập đầu tiên trong phiên"
+
+msgid "Inline Formatting"
+msgstr "Định dạng inline"
+
+msgid "Apply inline formatting in text"
+msgstr "Áp dụng định dạng inline trong văn bản"
+
+msgid "When enabled, the engine will parse simple inline markup in outputs."
+msgstr "Khi bật, engine sẽ phân tích cú pháp các ký hiệu inline đơn giản trong nội dung hiển thị."
+
+msgid "Tap to reveal"
+msgstr "Nhấn để hiển thị"

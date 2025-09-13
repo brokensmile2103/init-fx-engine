@@ -1,4 +1,4 @@
-// fx-preloader.js - Updated version không bị flash
+// fx-preloader.js - Minimal fix - chỉ sửa z-index issue + session_once
 (function initPreloader() {
     // Không cần wait config nữa vì đã pass sớm từ PHP
     const config = window.INIT_FX?.preloader;
@@ -7,6 +7,27 @@
         document.documentElement.classList.remove('init-fx-preloading');
         return;
     }
+
+    // === ONLY ONCE PER SESSION ===
+    const SEEN_KEY = 'init_fx_preloader_seen';
+    if (config.session_once) {
+        try {
+            if (sessionStorage.getItem(SEEN_KEY) === '1') {
+                // Đã hiển thị trong session này → bỏ qua, dọn dẹp ngay
+                document.documentElement.classList.remove('init-fx-preloading');
+                var pre = document.getElementById('init-fx-preloader');
+                if (pre && pre.parentNode) pre.remove();
+                var critical = document.getElementById('init-fx-critical-preloader');
+                if (critical && critical.parentNode) critical.remove();
+                return;
+            }
+            // Đánh dấu đã hiển thị cho session hiện tại
+            sessionStorage.setItem(SEEN_KEY, '1');
+        } catch (e) {
+            // Nếu sessionStorage bị chặn, tiếp tục hiển thị như bình thường
+        }
+    }
+    // === END ONLY ONCE PER SESSION ===
 
     const style = config.style || 'dot';
     const bg = config.bg || '#ffffff';
@@ -53,7 +74,7 @@
 
     const color = isDark(bg) ? '#ffffff' : '#000000';
 
-    // Style definitions cho từng loại preloader
+    // Style definitions cho từng loại preloader - ORIGINAL STYLES
     const styleDefinitions = {
         dot: `
             #init-fx-preloader span {
@@ -158,6 +179,9 @@
             preloader = document.createElement('div');
             preloader.id = 'init-fx-preloader';
             
+            // ONLY FIX Z-INDEX - add inline style để ensure z-index
+            preloader.style.zIndex = '999999999';
+            
             // Safe append - check if body exists
             if (document.body) {
                 document.body.appendChild(preloader);
@@ -165,9 +189,12 @@
                 // Fallback: append to documentElement if body not ready
                 document.documentElement.appendChild(preloader);
             }
+        } else {
+            // Ensure existing preloader has correct z-index
+            preloader.style.zIndex = '999999999';
         }
 
-        // Clear và setup content
+        // Clear và setup content - ORIGINAL LOGIC
         preloader.innerHTML = '';
 
         // Add content theo style
@@ -214,25 +241,39 @@
         const animations = document.getElementById('init-fx-preloader-animations');
         const criticalCSS = document.getElementById('init-fx-critical-preloader');
 
-        // Start fade out
-        if (preloader) {
-            preloader.classList.add('fade-out');
-        }
+        if (!preloader) return;
 
-        // Remove preloading state để show content
+        // MANUAL FADE OUT WITH JAVASCRIPT - NO CSS ANIMATION
+        preloader.style.pointerEvents = 'none';
+        preloader.style.transition = 'opacity 1.2s cubic-bezier(0.4, 0.0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0.0, 0.2, 1)';
+        
+        // Start fade immediately
+        requestAnimationFrame(() => {
+            preloader.style.opacity = '0';
+            preloader.style.transform = 'scale(1.02)';
+        });
+        
+        // Show content với gentle transition
         setTimeout(() => {
             document.documentElement.classList.remove('init-fx-preloading');
-        }, 200); // Show content sau 200ms
+        }, 400);
 
-        // Remove tất cả elements sau khi fade out xong
+        // Complete cleanup sau khi transition done
         setTimeout(() => {
-            if (preloader) preloader.remove();
-            if (animations) animations.remove();
-            if (criticalCSS) criticalCSS.remove();
-        }, 600); // Match với CSS transition time
+            if (preloader && preloader.parentNode) {
+                preloader.style.visibility = 'hidden';
+                preloader.remove();
+            }
+            if (animations && animations.parentNode) {
+                animations.remove();
+            }
+            if (criticalCSS && criticalCSS.parentNode) {
+                criticalCSS.remove();
+            }
+        }, 1300);
     }
 
-    // Main execution với proper timing
+    // Main execution với proper timing - ORIGINAL LOGIC
     function run() {
         // Đảm bảo body đã ready trước khi setup
         if (!document.body) {
@@ -248,7 +289,7 @@
 
         const handleLoadComplete = () => {
             const elapsed = performance.now() - startTime;
-            const remainingTime = Math.max(0, MIN_SHOW_TIME - elapsed);
+            const remainingTime = Math.max(500, MIN_SHOW_TIME - elapsed); // Đảm bảo user thấy preloader
             
             setTimeout(hidePreloader, remainingTime);
         };
@@ -260,7 +301,7 @@
         }
     }
 
-    // Execute với better timing handling
+    // Execute với better timing handling - ORIGINAL LOGIC
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', run, { once: true });
     } else {

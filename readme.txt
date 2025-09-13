@@ -4,7 +4,7 @@ Tags: animation, effect, confetti, comment, interaction
 Requires at least: 5.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,16 @@ Yes. You can format text using simple markers:
 
 == Changelog ==
 
+= 1.3 – September 13, 2025 =
+- **New Feature**: Added *Session-only Preloader* option (only shows preloader on first visit per session).
+- **New Feature**: Added *Inline Formatting toggle* (enable/disable parsing of inline syntax in texts).
+- **New Feature**: Introduced *Spoiler syntax* using `||text||` — wraps any content (including images) inside a blurred container with click-to-reveal overlay.
+- **Internationalization**: Spoiler overlay label (`Tap to reveal`) is now translatable via i18n.
+- **CSS Injection**: Optimized to load highlight and spoiler styles only when needed.
+- **Developer**: Extended sanitize and settings registration for new options (`session_once`, `inlinefmt`).
+- **Stability**: Fixed duplication issues when parsing spoiler blocks and ensured clean DOM structure.
+- **UX**: Improved spoiler accessibility with ARIA labels.
+
 = 1.2 – August 25, 2025 =
 - **Critical Fix**: Resolved preloader flash/flicker issue during page load
 - **Performance**: Eliminated race conditions in asset loading sequence
@@ -105,7 +115,7 @@ You are free to use, modify, and distribute it under the same license.
 
 This plugin includes these open-source libraries:
 
-* canvas-confetti — https://www.kirilv.com/canvas-confetti/
-* particles.js — https://vincentgarreau.com/particles.js/
+* canvas-confetti — [https://www.kirilv.com/canvas-confetti/](https://www.kirilv.com/canvas-confetti/)
+* particles.js — [https://vincentgarreau.com/particles.js/](https://vincentgarreau.com/particles.js/)
 
 Both are MIT licensed and bundled with the plugin.

@@ -48,6 +48,7 @@ add_action('admin_init', function () {
     register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_snowfall', 'init_plugin_suite_fx_engine_sanitize_snowfall');
     register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_grayscale', 'init_plugin_suite_fx_engine_sanitize_grayscale');
     register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_preloader', 'init_plugin_suite_fx_engine_sanitize_preloader');
+    register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_inlinefmt', 'init_plugin_suite_fx_engine_sanitize_inlinefmt');
 });
 
 function init_plugin_suite_fx_engine_settings_page() {
@@ -78,9 +79,14 @@ function init_plugin_suite_fx_engine_settings_page() {
     ]);
 
     $preloader = get_option('init_plugin_suite_fx_engine_preloader', [
-        'enabled' => false,
-        'style'   => 'dot',
-        'bg'      => ''
+        'enabled'      => false,
+        'style'        => 'dot',
+        'bg'           => '',
+        'session_once' => false
+    ]);
+
+    $inlinefmt = get_option('init_plugin_suite_fx_engine_inlinefmt', [
+        'enabled' => true,
     ]);
 
     include INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-form.php';
@@ -114,8 +120,15 @@ function init_plugin_suite_fx_engine_sanitize_grayscale($input) {
 
 function init_plugin_suite_fx_engine_sanitize_preloader($input) {
     return [
+        'enabled'      => !empty($input['enabled']),
+        'style'        => in_array($input['style'] ?? 'dot', ['dot', 'bar', 'logo', 'flower', 'spinner', 'emoji']) ? $input['style'] : 'dot',
+        'bg'           => sanitize_text_field($input['bg'] ?? ''),
+        'session_once' => !empty($input['session_once'])
+    ];
+}
+
+function init_plugin_suite_fx_engine_sanitize_inlinefmt($input) {
+    return [
         'enabled' => !empty($input['enabled']),
-        'style'   => in_array($input['style'] ?? 'dot', ['dot', 'bar', 'logo', 'flower', 'spinner', 'emoji']) ? $input['style'] : 'dot',
-        'bg'      => sanitize_text_field($input['bg'] ?? '')
     ];
 }

@@ -56,6 +56,13 @@
                         <br>
                         <small><?php esc_html_e('Use a single color or comma-separated values for gradient.', 'init-fx-engine'); ?></small>
                     </label>
+                    <br><br>
+                    <label>
+                        <input type="checkbox"
+                               name="init_plugin_suite_fx_engine_preloader[session_once]"
+                               value="1" <?php checked($preloader['session_once'] ?? false); ?>>
+                        <?php esc_html_e('Only show on first visit in a session', 'init-fx-engine'); ?>
+                    </label>
                 </td>
             </tr>
 
@@ -125,6 +132,22 @@
                             <input type="date" name="init_plugin_suite_fx_engine_grayscale[custom_end]" value="<?php echo esc_attr($grayscale['custom_end'] ?? ''); ?>">
                         </label>
                     </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th scope="row"><?php esc_html_e('Inline Formatting', 'init-fx-engine'); ?></th>
+                <td>
+                    <label>
+                        <input type="checkbox"
+                               name="init_plugin_suite_fx_engine_inlinefmt[enabled]"
+                               value="1" <?php checked($inlinefmt['enabled'] ?? true); ?>>
+                        <?php esc_html_e('Apply inline formatting in text', 'init-fx-engine'); ?>
+                    </label>
+                    <br>
+                    <small class="description">
+                        <?php esc_html_e('When enabled, the engine will parse simple inline markup in outputs.', 'init-fx-engine'); ?>
+                    </small>
                 </td>
             </tr>
         </table>
