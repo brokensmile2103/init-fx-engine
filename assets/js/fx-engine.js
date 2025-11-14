@@ -171,44 +171,102 @@ function cannonBlast() {
 }
 
 function replaceFXKeywordsInDOM(root = document.body) {
-    if (typeof FX_KEYWORDS !== 'object') return;
+    if (typeof FX_KEYWORDS !== 'object' || !root) return;
 
-    Object.entries(FX_KEYWORDS).forEach(([effect, entries]) => {
-        entries.forEach(entry => {
-            const keyword = entry.keyword;
-            const emoji = entry.emoji || null;
-            const regex = new RegExp(`\\b(${escapeRegExp(keyword)})\\b`, 'gi');
+    const SKIP = new Set(['SCRIPT','STYLE','NOSCRIPT','TEXTAREA','CODE','PRE','SVG','MATH','INPUT']);
+    const PROCESSED_ATTR = 'data-fx-keyword-processed';
 
-            root.querySelectorAll('*:not(script):not(style)').forEach(node => {
-                node.childNodes.forEach(child => {
-                    if (child.nodeType === 3 && regex.test(child.textContent)) {
-                        const frag = document.createDocumentFragment();
-                        const parts = child.textContent.split(regex);
-
-                        parts.forEach(part => {
-                            if (part.toLowerCase() === keyword.toLowerCase()) {
-                                const link = document.createElement('a');
-                                link.href = '#';
-                                link.className = 'fx-keyword';
-                                link.dataset.effect = effect;
-                                if (emoji) link.dataset.emoji = emoji;
-                                link.textContent = keyword;
-                                link.addEventListener('click', e => {
-                                    e.preventDefault();
-                                    runEffect(effect, emoji);
-                                });
-                                frag.appendChild(link);
-                            } else {
-                                frag.appendChild(document.createTextNode(part));
-                            }
-                        });
-
-                        node.replaceChild(frag, child);
-                    }
-                });
-            });
+    // Gộp & chuẩn hóa từ khóa
+    const all = [];
+    for (const [effect, entries] of Object.entries(FX_KEYWORDS)) {
+        (entries || []).forEach(({ keyword, emoji }) => {
+            if (!keyword) return;
+            all.push({ kw: String(keyword), kwLower: String(keyword).toLowerCase(), effect, emoji: emoji || null });
         });
+    }
+    if (!all.length) return;
+
+    // Dedup (ưu tiên chuỗi dài hơn), sort dài→ngắn để tránh match bán phần
+    const byKey = new Map();
+    for (const item of all) {
+        const prev = byKey.get(item.kwLower);
+        if (!prev || item.kw.length > prev.kw.length) byKey.set(item.kwLower, item);
+    }
+    const list = Array.from(byKey.values()).sort((a, b) => b.kw.length - a.kw.length);
+
+    const escapeRx = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = `(?<![\\p{L}\\p{N}_])(${list.map(i => escapeRx(i.kw)).join('|')})(?![\\p{L}\\p{N}_])`;
+    const regex = new RegExp(pattern, 'giu'); // global + ignoreCase + unicode
+    const lookup = new Map(list.map(i => [i.kwLower, i]));
+
+    // Delegation: chỉ 1 listener cho cả root
+    if (!root.__fxKwDelegated) {
+        root.addEventListener('click', (e) => {
+            const a = e.target && e.target.closest ? e.target.closest('a.fx-keyword') : null;
+            if (!a) return;
+            e.preventDefault();
+            const name = a.dataset.effect || '';
+            const opt = a.dataset.emoji || null;
+            if (typeof window.runEffect === 'function') window.runEffect(name, opt);
+        }, { passive: false });
+        root.__fxKwDelegated = true;
+    }
+
+    // Duyệt text nodes 1 lần bằng TreeWalker
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+            if (!node || !node.nodeValue) return NodeFilter.FILTER_REJECT;
+            const p = node.parentElement;
+            if (!p || SKIP.has(p.tagName)) return NodeFilter.FILTER_REJECT;
+            if (p.closest && p.closest('a.fx-keyword')) return NodeFilter.FILTER_REJECT;
+            if (p.hasAttribute(PROCESSED_ATTR)) return NodeFilter.FILTER_REJECT;
+            regex.lastIndex = 0;
+            return regex.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
     });
+
+    const toMark = new Set();
+
+    for (let textNode; (textNode = walker.nextNode()); ) {
+        const text = textNode.nodeValue;
+        const frag = document.createDocumentFragment();
+        let last = 0;
+
+        regex.lastIndex = 0;
+        let m;
+        while ((m = regex.exec(text))) {
+            const start = m.index;
+            const end = regex.lastIndex;
+
+            if (start > last) {
+                frag.appendChild(document.createTextNode(text.slice(last, start)));
+            }
+
+            const matched = m[0];
+            const meta = lookup.get(matched.toLowerCase());
+
+            const a = document.createElement('a');
+            a.href = '#';
+            a.className = 'fx-keyword';
+            a.dataset.effect = meta ? meta.effect : '';
+            if (meta && meta.emoji) a.dataset.emoji = meta.emoji;
+            a.textContent = matched; // giữ nguyên hoa/thường như trong nội dung
+
+            frag.appendChild(a);
+            last = end;
+        }
+
+        if (last < text.length) {
+            frag.appendChild(document.createTextNode(text.slice(last)));
+        }
+
+        const parent = textNode.parentNode;
+        parent.replaceChild(frag, textNode);
+        if (parent.nodeType === 1) toMark.add(parent);
+    }
+
+    // Đánh dấu để không quét lại cùng vùng
+    toMark.forEach(el => el.setAttribute(PROCESSED_ATTR, '1'));
 }
 
 // enhanceInlineFormatting — range-based spoiler wrapping + smart CSS + i18n
@@ -320,115 +378,95 @@ function enhanceInlineFormatting(root = document.body) {
         }
     }
 
-    // Collect '||' tokens (ordered) inside container
-    function collectSpoilerTokens(container) {
-        const tokens = [];
-        const walker = document.createTreeWalker(
-            container,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: (node) => {
-                    const p = node.parentNode;
-                    if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
-                    if (p.closest('.fx-spoiler')) return NodeFilter.FILTER_REJECT;
-                    if (isSkippable(p)) return NodeFilter.FILTER_REJECT;
-                    return NodeFilter.FILTER_ACCEPT;
-                }
+    // --- Spoiler helpers: replace ||...|| theo từng text node ---
+    function processSpoilersInTextNode(textNode, SPOILER_LABEL) {
+        const s = textNode.nodeValue;
+        if (!s || s.indexOf('||') === -1) return;
+
+        const frag = document.createDocumentFragment();
+        let pos = 0;
+
+        while (pos < s.length) {
+            const start = s.indexOf('||', pos);
+            if (start === -1) {
+                // còn lại là plain text
+                frag.appendChild(document.createTextNode(s.slice(pos)));
+                break;
             }
-        );
-        let n;
-        while ((n = walker.nextNode())) {
-            let s = n.nodeValue;
-            let idx = s.indexOf('||');
-            while (idx !== -1) {
-                tokens.push({ node: n, offset: idx });
-                idx = s.indexOf('||', idx + 2);
-            }
-        }
-        return tokens;
-    }
-
-    // Range-based wrapper: wraps one pair at a time, loops until no pair
-    function wrapSpoilersInContainer(container) {
-        if (isSkippable(container)) return;
-
-        // process children first
-        Array.from(container.children).forEach(child => wrapSpoilersInContainer(child));
-
-        while (true) {
-            const tokens = collectSpoilerTokens(container);
-            if (tokens.length < 2) break;
-
-            const startTok = tokens[0];
-            const endTok = tokens[1];
-
-            // Create range [after start '||', before end '||']
-            const range = document.createRange();
-            range.setStart(startTok.node, startTok.offset + 2);
-            range.setEnd(endTok.node, endTok.offset);
-
-            // Extract contents between tokens
-            const contents = range.extractContents();
-
-            // Remove tokens themselves
-            // - start token: remove from startTok.node (characters at startTok.offset..+2)
-            const sText = startTok.node.nodeValue || '';
-            startTok.node.nodeValue = sText.slice(0, startTok.offset) + sText.slice(startTok.offset + 2);
-
-            // - end token: after extraction, endTok.node now starts right at original end offset
-            //   so remove FIRST 2 chars
-            const eText = endTok.node.nodeValue || '';
-            if (eText.startsWith('||')) {
-                endTok.node.nodeValue = eText.slice(2);
-            } else {
-                // fallback: remove at recorded offset if still present
-                endTok.node.nodeValue = eText.slice(0, endTok.offset) + eText.slice(endTok.offset + 2);
+            // thêm phần trước token mở
+            if (start > pos) {
+                frag.appendChild(document.createTextNode(s.slice(pos, start)));
             }
 
-            // Build wrapper and insert at the collapsed range start
-            const wrapper = document.createElement('div');
+            const end = s.indexOf('||', start + 2);
+            if (end === -1) {
+                // không có cặp đóng: giữ nguyên từ '||' còn lại
+                frag.appendChild(document.createTextNode(s.slice(start)));
+                break;
+            }
+
+            // tạo wrapper cho phần giữa 2 token
+            const wrapper = document.createElement('span');
             wrapper.className = 'fx-spoiler is-hidden';
             wrapper.setAttribute('role', 'button');
             wrapper.setAttribute('tabindex', '0');
             wrapper.setAttribute('aria-label', SPOILER_LABEL);
 
-            const inner = document.createElement('div');
+            const inner = document.createElement('span');
             inner.className = 'fx-spoiler-content';
-            inner.appendChild(contents);
+            inner.textContent = s.slice(start + 2, end);
+
             wrapper.appendChild(inner);
+            frag.appendChild(wrapper);
 
-            // Insert wrapper where the range used to be
-            range.insertNode(wrapper);
-
-            // Clean up range
-            range.detach();
+            pos = end + 2; // nhảy qua token đóng
         }
+
+        textNode.parentNode.replaceChild(frag, textNode);
     }
 
-    function walkAndApply(container) {
-        wrapSpoilersInContainer(container);
-
-        const treeWalker = document.createTreeWalker(
+    function walkAndApply(container, SPOILER_LABEL) {
+        // 1) Spoilers trước
+        const treeWalker1 = document.createTreeWalker(
             container,
             NodeFilter.SHOW_TEXT,
             {
-                acceptNode: (node) => {
+                acceptNode(node) {
                     const p = node.parentNode;
                     if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
                     if (p.closest('.fx-spoiler')) return NodeFilter.FILTER_REJECT;
-                    if (isSkippable(p)) return NodeFilter.FILTER_REJECT;
+                    if (p.matches && p.matches('script,style,pre,code')) return NodeFilter.FILTER_REJECT;
+                    return node.nodeValue && node.nodeValue.indexOf('||') !== -1
+                        ? NodeFilter.FILTER_ACCEPT
+                        : NodeFilter.FILTER_REJECT;
+                }
+            }
+        );
+        const spoilerNodes = [];
+        for (let n; (n = treeWalker1.nextNode()); ) spoilerNodes.push(n);
+        spoilerNodes.forEach(n => processSpoilersInTextNode(n, SPOILER_LABEL));
+
+        // 2) Inline rules sau (để không “ăn” vào phần đã wrap)
+        const treeWalker2 = document.createTreeWalker(
+            container,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode(node) {
+                    const p = node.parentNode;
+                    if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
+                    if (p.closest('.fx-spoiler')) return NodeFilter.FILTER_REJECT;
+                    if (p.matches && p.matches('script,style,pre,code')) return NodeFilter.FILTER_REJECT;
                     return NodeFilter.FILTER_ACCEPT;
                 }
             }
         );
         const textNodes = [];
-        let current;
-        while ((current = treeWalker.nextNode())) textNodes.push(current);
+        for (let m; (m = treeWalker2.nextNode()); ) textNodes.push(m);
         textNodes.forEach(applyInlineRulesToTextNode);
     }
 
     ensureInlineAndSpoilerCSS(root);
-    walkAndApply(root);
+    walkAndApply(root, SPOILER_LABEL);
 
     if (!root.__fxSpoilerBound) {
         root.addEventListener('click', (e) => {
@@ -463,7 +501,7 @@ function injectHighlightStyleIfNeeded() {
 }
 
 function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+    return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

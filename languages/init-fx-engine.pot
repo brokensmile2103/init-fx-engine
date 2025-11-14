@@ -9,6 +9,9 @@ msgstr ""
 msgid "Init FX Engine Settings"
 msgstr ""
 
+msgid "Settings"
+msgstr ""
+
 msgid "Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!"
 msgstr ""
 

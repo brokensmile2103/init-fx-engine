@@ -2,9 +2,9 @@
 Contributors: brokensmile.2103
 Tags: animation, effect, confetti, comment, interaction
 Requires at least: 5.5
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,15 +68,22 @@ Yes. You can format text using simple markers:
 
 == Changelog ==
 
+= 1.4 – November 14, 2025 =
+- **Performance**: Rebuilt FX Keyword Scanner — now uses a single-pass TreeWalker, unified regex engine, parent-level deduping, and smart skip rules for ultra-fast DOM parsing
+- **Stability**: Improved safety checks with `data-fx-keyword-processed` to prevent reprocessing loops and ensure clean node replacement
+- **UX**: Smoother keyword-trigger interactions via a single delegated click listener (reduces event overhead and boosts responsiveness)
+- **Developer**: Refactored internal matching pipeline for clarity, extensibility, and easier debugging
+- **Compatibility**: More accurate keyword detection across multilingual and mixed-format HTML content
+
 = 1.3 – September 13, 2025 =
-- **New Feature**: Added *Session-only Preloader* option (only shows preloader on first visit per session).
-- **New Feature**: Added *Inline Formatting toggle* (enable/disable parsing of inline syntax in texts).
-- **New Feature**: Introduced *Spoiler syntax* using `||text||` — wraps any content (including images) inside a blurred container with click-to-reveal overlay.
-- **Internationalization**: Spoiler overlay label (`Tap to reveal`) is now translatable via i18n.
-- **CSS Injection**: Optimized to load highlight and spoiler styles only when needed.
-- **Developer**: Extended sanitize and settings registration for new options (`session_once`, `inlinefmt`).
-- **Stability**: Fixed duplication issues when parsing spoiler blocks and ensured clean DOM structure.
-- **UX**: Improved spoiler accessibility with ARIA labels.
+- **New Feature**: Added *Session-only Preloader* option (only shows preloader on first visit per session)
+- **New Feature**: Added *Inline Formatting toggle* (enable/disable parsing of inline syntax in texts)
+- **New Feature**: Introduced *Spoiler syntax* using `||text||` — wraps any content (including images) inside a blurred container with click-to-reveal overlay
+- **Internationalization**: Spoiler overlay label (`Tap to reveal`) is now translatable via i18n
+- **CSS Injection**: Optimized to load highlight and spoiler styles only when needed
+- **Developer**: Extended sanitize and settings registration for new options (`session_once`, `inlinefmt`)
+- **Stability**: Fixed duplication issues when parsing spoiler blocks and ensured clean DOM structure
+- **UX**: Improved spoiler accessibility with ARIA labels
 
 = 1.2 – August 25, 2025 =
 - **Critical Fix**: Resolved preloader flash/flicker issue during page load

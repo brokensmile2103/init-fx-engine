@@ -3,13 +3,13 @@
  * Plugin Name: Init FX Engine
  * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 1.3
+ * Version: 1.4
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
  * Domain Path: /languages
  * Requires at least: 5.5
- * Tested up to: 6.8
+ * Tested up to: 6.9
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.3' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.4' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
@@ -432,3 +432,15 @@ add_action('wp_enqueue_scripts', function () {
         'document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("init-fx-grayscale");});'
     );
 });
+
+// ==========================
+// Settings link
+// ==========================
+
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'init_plugin_suite_fx_engine_add_settings_link');
+// Add a "Settings" link to the plugin row in the Plugins admin screen
+function init_plugin_suite_fx_engine_add_settings_link($links) {
+    $settings_link = '<a href="' . admin_url('options-general.php?page=' . INIT_PLUGIN_SUITE_FX_ENGINE_SLUG) . '">' . __('Settings', 'init-fx-engine') . '</a>';
+    array_unshift($links, $settings_link);
+    return $links;
+}
