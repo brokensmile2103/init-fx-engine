@@ -3,7 +3,7 @@
  * Plugin Name: Init FX Engine
  * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 1.4
+ * Version: 1.5
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.4' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.5' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
@@ -329,13 +329,20 @@ add_action('wp_footer', function () {
  */
 add_action('wp_enqueue_scripts', function () {
     $snowfall = get_option('init_plugin_suite_fx_engine_snowfall', [
-        'enabled'      => false,
-        'mode'         => 'auto',
-        'custom_start' => '',
-        'custom_end'   => ''
+        'enabled'       => false,
+        'mode'          => 'auto',
+        'custom_start'  => '',
+        'custom_end'    => '',
+        'homepage_only' => false,
     ]);
 
+    // Không bật thì thôi
     if (empty($snowfall['enabled'])) {
+        return;
+    }
+
+    // Nếu chọn chỉ chạy ở trang chủ → thoát nếu không phải homepage
+    if (!empty($snowfall['homepage_only']) && !is_front_page() && !is_home()) {
         return;
     }
 

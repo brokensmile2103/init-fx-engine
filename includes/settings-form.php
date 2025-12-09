@@ -107,6 +107,13 @@
                             <input type="date" name="init_plugin_suite_fx_engine_snowfall[custom_end]" value="<?php echo esc_attr($snowfall['custom_end'] ?? ''); ?>">
                         </label>
                     </div>
+                    <br>
+                    <label>
+                        <input type="checkbox"
+                               name="init_plugin_suite_fx_engine_snowfall[homepage_only]"
+                               value="1" <?php checked($snowfall['homepage_only'] ?? false); ?>>
+                        <?php esc_html_e('Show snowfall effect on homepage only', 'init-fx-engine'); ?>
+                    </label>
                 </td>
             </tr>
 

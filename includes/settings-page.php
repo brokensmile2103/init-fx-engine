@@ -68,7 +68,8 @@ function init_plugin_suite_fx_engine_settings_page() {
         'enabled'      => false,
         'mode'         => 'auto',
         'custom_start' => '',
-        'custom_end'   => ''
+        'custom_end'   => '',
+        'homepage_only' => false
     ]);
 
     $grayscale = get_option('init_plugin_suite_fx_engine_grayscale', [
@@ -105,7 +106,8 @@ function init_plugin_suite_fx_engine_sanitize_snowfall($input) {
         'enabled'      => !empty($input['enabled']),
         'mode'         => in_array($input['mode'] ?? 'auto', ['auto', 'custom']) ? $input['mode'] : 'auto',
         'custom_start' => sanitize_text_field($input['custom_start'] ?? ''),
-        'custom_end'   => sanitize_text_field($input['custom_end'] ?? '')
+        'custom_end'   => sanitize_text_field($input['custom_end'] ?? ''),
+        'homepage_only' => !empty($input['homepage_only'])
     ];
 }
 
