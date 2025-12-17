@@ -69,7 +69,12 @@ function init_plugin_suite_fx_engine_settings_page() {
         'mode'         => 'auto',
         'custom_start' => '',
         'custom_end'   => '',
-        'homepage_only' => false
+        'homepage_only' => false,
+        // ❄ Snow settings (NEW)
+        'amount'         => 80,    // số lượng tuyết – vừa phải
+        'size'           => 4,     // kích thước trung bình
+        'speed'          => 1.2,   // tốc độ rơi chill
+        'opacity'        => 0.6,   // độ trong suốt
     ]);
 
     $grayscale = get_option('init_plugin_suite_fx_engine_grayscale', [
@@ -103,11 +108,15 @@ function init_plugin_suite_fx_engine_sanitize_keywords($input) {
 
 function init_plugin_suite_fx_engine_sanitize_snowfall($input) {
     return [
-        'enabled'      => !empty($input['enabled']),
-        'mode'         => in_array($input['mode'] ?? 'auto', ['auto', 'custom']) ? $input['mode'] : 'auto',
-        'custom_start' => sanitize_text_field($input['custom_start'] ?? ''),
-        'custom_end'   => sanitize_text_field($input['custom_end'] ?? ''),
-        'homepage_only' => !empty($input['homepage_only'])
+        'enabled'        => !empty($input['enabled']),
+        'mode'           => in_array($input['mode'] ?? 'auto', ['auto', 'custom']) ? $input['mode'] : 'auto',
+        'custom_start'   => sanitize_text_field($input['custom_start'] ?? ''),
+        'custom_end'     => sanitize_text_field($input['custom_end'] ?? ''),
+        'homepage_only'  => !empty($input['homepage_only']),
+        'amount'         => max(20, min(200, intval($input['amount'] ?? 80))),
+        'size'           => max(1, min(10, intval($input['size'] ?? 4))),
+        'speed'          => max(0.3, min(5, floatval($input['speed'] ?? 1.2))),
+        'opacity'        => max(0.1, min(1, floatval($input['opacity'] ?? 0.6))),
     ];
 }
 

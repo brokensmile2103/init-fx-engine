@@ -107,3 +107,21 @@ msgstr "Khi bật, engine sẽ phân tích cú pháp các ký hiệu inline đơ
 
 msgid "Tap to reveal"
 msgstr "Nhấn để hiển thị"
+
+msgid "Show snowfall effect on homepage only"
+msgstr "Chỉ hiển thị hiệu ứng tuyết rơi ở trang chủ"
+
+msgid "Snow amount"
+msgstr "Số lượng tuyết"
+
+msgid "Snow size"
+msgstr "Kích thước tuyết"
+
+msgid "Fall speed"
+msgstr "Tốc độ rơi"
+
+msgid "Opacity"
+msgstr "Độ trong suốt"
+
+msgid "Recommended: 60–100"
+msgstr "Khuyến nghị: 60–100"

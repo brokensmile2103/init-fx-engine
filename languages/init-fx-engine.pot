@@ -104,3 +104,21 @@ msgstr ""
 
 msgid "Tap to reveal"
 msgstr ""
+
+msgid "Show snowfall effect on homepage only"
+msgstr ""
+
+msgid "Snow amount"
+msgstr ""
+
+msgid "Snow size"
+msgstr ""
+
+msgid "Fall speed"
+msgstr ""
+
+msgid "Opacity"
+msgstr ""
+
+msgid "Recommended: 60–100"
+msgstr ""

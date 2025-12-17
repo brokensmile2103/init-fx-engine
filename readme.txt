@@ -4,7 +4,7 @@ Tags: animation, effect, confetti, comment, interaction
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.5
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,18 @@ Yes. You can format text using simple markers:
 2. Snowfall effect scheduled automatically or set with custom dates.
 
 == Changelog ==
+
+= 1.6 – December 17, 2025 =
+- **Enhancement**: Added advanced Snowfall configuration options — control snow amount, size, fall speed, and opacity
+- **UX**: Introduced fine-grained snowfall tuning for balanced visuals without overwhelming content
+- **Performance**: Optimized particle density calculation to prevent visual clutter at higher snow counts
+- **Stability**: Enforced strict value clamping and safe defaults to avoid misconfiguration and extreme effects
+- **Developer**: Normalized snowfall settings schema with backward-compatible defaults for legacy installs
+- **Developer**: Frontend now receives a minimal, sanitized snowfall config payload (reduces JS surface and coupling)
+- **Compatibility**: Improved resilience when particles.js loads late or configuration is partially missing
+- **Internationalization**: Added translatable strings for all new Snowfall settings and helper descriptions
+- **Code Quality**: Refactored snowfall bootstrapping logic for clearer separation between schedule logic and rendering
+- **Maintainability**: Prepared Snowfall module for future presets (Light / Normal / Heavy) without breaking changes
 
 = 1.5 – December 9, 2025 =
 - **New Feature**: Added *Homepage-only Snowfall* option — allow snowfall effect to run exclusively on the homepage

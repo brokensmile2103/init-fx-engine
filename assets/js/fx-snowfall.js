@@ -13,24 +13,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.body.appendChild(snowDiv);
     }
+
     if (typeof particlesJS === 'function') {
-        startSnowfall();
+        notedStartSnowfall();
     } else {
         console.warn('[Init FX Engine] particlesJS not found.');
     }
 });
 
-function startSnowfall() {
+function fxClamp(n, min, max) {
+    n = Number(n);
+    if (!Number.isFinite(n)) return min;
+    return Math.max(min, Math.min(max, n));
+}
+
+function notedStartSnowfall() {
+    const cfg = (window.INIT_FX && window.INIT_FX.snowfall) ? window.INIT_FX.snowfall : {};
+
+    // Defaults vừa phải
+    const amount  = fxClamp(cfg.amount,  20, 200) || 80;
+    const size    = fxClamp(cfg.size,     1,  10) || 4;
+    const speed   = fxClamp(cfg.speed,  0.3,   5) || 1.2;
+    const opacity = fxClamp(cfg.opacity, 0.1,   1) || 0.6;
+
+    // Density: tăng area theo amount để tránh quá dày khi user kéo amount lên
+    const valueArea = fxClamp(800 + (200 - amount) * 4, 800, 1600);
+
     particlesJS('particles-snow-js', {
         particles: {
-            number: { value: 200, density: { enable: true, value_area: 800 } },
+            number: { value: amount, density: { enable: true, value_area: valueArea } },
             color: { value: '#ffffff' },
             shape: { type: 'circle' },
-            opacity: { value: 0.5, random: true },
-            size: { value: 6, random: true },
+            opacity: { value: opacity, random: true },
+            size: { value: size, random: true },
             move: {
                 enable: true,
-                speed: 2,
+                speed: speed,
                 direction: 'bottom',
                 out_mode: 'out'
             },

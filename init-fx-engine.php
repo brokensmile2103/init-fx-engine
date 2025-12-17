@@ -3,7 +3,7 @@
  * Plugin Name: Init FX Engine
  * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 1.5
+ * Version: 1.6
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.5' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.6' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
@@ -366,6 +366,27 @@ add_action('wp_enqueue_scripts', function () {
         return;
     }
 
+    // Normalize + default
+    $snowfall = wp_parse_args($snowfall, [
+        'enabled'        => false,
+        'mode'           => 'auto',
+        'custom_start'   => '',
+        'custom_end'     => '',
+        'homepage_only'  => false,
+
+        // Snow settings
+        'amount'         => 80,
+        'size'           => 4,
+        'speed'          => 1.2,
+        'opacity'        => 0.6,
+    ]);
+
+    // Hard clamp
+    $snowfall['amount']  = max(20, min(200, (int) $snowfall['amount']));
+    $snowfall['size']    = max(1,  min(10,  (int) $snowfall['size']));
+    $snowfall['speed']   = max(0.3, min(5,  (float) $snowfall['speed']));
+    $snowfall['opacity'] = max(0.1, min(1,  (float) $snowfall['opacity']));
+
     wp_enqueue_script(
         'init-plugin-suite-fx-particles',
         INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/particles.min.js',
@@ -382,9 +403,18 @@ add_action('wp_enqueue_scripts', function () {
         true
     );
 
+    // Chỉ truyền những thứ frontend cần
+    $frontend_snowfall = [
+        'amount'  => $snowfall['amount'],
+        'size'    => $snowfall['size'],
+        'speed'   => $snowfall['speed'],
+        'opacity' => $snowfall['opacity'],
+    ];
+
     wp_add_inline_script(
         'init-plugin-suite-fx-snowfall',
-        'window.INIT_FX = window.INIT_FX || {}; window.INIT_FX.snowfall = ' . wp_json_encode($snowfall) . ';'
+        'window.INIT_FX = window.INIT_FX || {}; window.INIT_FX.snowfall = ' . wp_json_encode($frontend_snowfall) . ';',
+        'before'
     );
 });
 

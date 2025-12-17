@@ -93,11 +93,13 @@
                         <?php esc_html_e('Enable snowfall effect on site', 'init-fx-engine'); ?>
                     </label>
                     <br><br>
+                    <fieldset>
                     <label><input type="radio" name="init_plugin_suite_fx_engine_snowfall[mode]" value="auto" <?php checked($snowfall['mode'] ?? 'auto', 'auto'); ?>>
                         <?php esc_html_e('Auto schedule (Dec 20 – Dec 31)', 'init-fx-engine'); ?></label>
                     <br>
                     <label><input type="radio" name="init_plugin_suite_fx_engine_snowfall[mode]" value="custom" <?php checked($snowfall['mode'] ?? 'auto', 'custom'); ?>>
                         <?php esc_html_e('Custom schedule', 'init-fx-engine'); ?></label>
+                    </fieldset>
                     <div style="margin-top: 0.5em;">
                         <label><?php esc_html_e('Start Date', 'init-fx-engine'); ?>:
                             <input type="date" name="init_plugin_suite_fx_engine_snowfall[custom_start]" value="<?php echo esc_attr($snowfall['custom_start'] ?? ''); ?>">
@@ -114,6 +116,45 @@
                                value="1" <?php checked($snowfall['homepage_only'] ?? false); ?>>
                         <?php esc_html_e('Show snowfall effect on homepage only', 'init-fx-engine'); ?>
                     </label>
+                    <br><br>
+                    <label>
+                        <?php esc_html_e('Snow amount', 'init-fx-engine'); ?>:
+                        <input type="number"
+                               name="init_plugin_suite_fx_engine_snowfall[amount]"
+                               value="<?php echo esc_attr($snowfall['amount'] ?? 80); ?>"
+                               min="20" max="200" step="10">
+                    </label>
+                    <small><?php esc_html_e('Recommended: 60–100', 'init-fx-engine'); ?></small>
+
+                    <br><br>
+
+                    <label>
+                        <?php esc_html_e('Snow size', 'init-fx-engine'); ?>:
+                        <input type="number"
+                               name="init_plugin_suite_fx_engine_snowfall[size]"
+                               value="<?php echo esc_attr($snowfall['size'] ?? 4); ?>"
+                               min="1" max="10">
+                    </label>
+
+                    <br><br>
+
+                    <label>
+                        <?php esc_html_e('Fall speed', 'init-fx-engine'); ?>:
+                        <input type="number"
+                               name="init_plugin_suite_fx_engine_snowfall[speed]"
+                               value="<?php echo esc_attr($snowfall['speed'] ?? 1.2); ?>"
+                               min="0.3" max="5" step="0.1">
+                    </label>
+
+                    <br><br>
+
+                    <label>
+                        <?php esc_html_e('Opacity', 'init-fx-engine'); ?>:
+                        <input type="number"
+                               name="init_plugin_suite_fx_engine_snowfall[opacity]"
+                               value="<?php echo esc_attr($snowfall['opacity'] ?? 0.6); ?>"
+                               min="0.1" max="1" step="0.1">
+                    </label>
                 </td>
             </tr>
 
@@ -125,11 +166,13 @@
                         <?php esc_html_e('Enable grayscale effect on site', 'init-fx-engine'); ?>
                     </label>
                     <br><br>
+                    <fieldset>
                     <label><input type="radio" name="init_plugin_suite_fx_engine_grayscale[mode]" value="always" <?php checked($grayscale['mode'] ?? 'always', 'always'); ?>>
                         <?php esc_html_e('Always on', 'init-fx-engine'); ?></label>
                     <br>
                     <label><input type="radio" name="init_plugin_suite_fx_engine_grayscale[mode]" value="custom" <?php checked($grayscale['mode'] ?? 'off', 'custom'); ?>>
                         <?php esc_html_e('Custom schedule', 'init-fx-engine'); ?></label>
+                    </fieldset>
                     <div style="margin-top: 0.5em;">
                         <label><?php esc_html_e('Start Date', 'init-fx-engine'); ?>:
                             <input type="date" name="init_plugin_suite_fx_engine_grayscale[custom_start]" value="<?php echo esc_attr($grayscale['custom_start'] ?? ''); ?>">
