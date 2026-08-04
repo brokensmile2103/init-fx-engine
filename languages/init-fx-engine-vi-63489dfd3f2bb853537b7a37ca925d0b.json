@@ -1,0 +1,63 @@
+{
+  "translation-revision-date": "2026-08-04 00:00+0000",
+  "generator": "manual/claude",
+  "source": "assets/js/blocks-editor.js",
+  "domain": "messages",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "messages",
+        "lang": "vi",
+        "plural-forms": "nplurals=1; plural=0;"
+      },
+      "Button/Link Text": [
+        "Văn bản nút/link"
+      ],
+      "Cannon Blast": [
+        "Phát pháo"
+      ],
+      "Celebration Burst": [
+        "Vụ nổ ăn mừng"
+      ],
+      "Click": [
+        "Click"
+      ],
+      "Effect": [
+        "Hiệu ứng"
+      ],
+      "Emoji (for Emoji Rain)": [
+        "Emoji (dùng cho Emoji Rain)"
+      ],
+      "Emoji Rain": [
+        "Emoji rơi"
+      ],
+      "FX Trigger Settings": [
+        "Cài đặt FX Trigger"
+      ],
+      "Firework": [
+        "Pháo hoa"
+      ],
+      "HTML Tag": [
+        "Thẻ HTML"
+      ],
+      "Heart Rain": [
+        "Mưa trái tim"
+      ],
+      "Hover": [
+        "Hover"
+      ],
+      "School Pride": [
+        "Niềm tự hào trường học"
+      ],
+      "Starlight Burst": [
+        "Bùng nổ sao"
+      ],
+      "Trigger On": [
+        "Kích hoạt khi"
+      ],
+      "e.g. a, button, span": [
+        "vd: a, button, span"
+      ]
+    }
+  }
+}

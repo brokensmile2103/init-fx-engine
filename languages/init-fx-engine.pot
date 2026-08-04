@@ -122,3 +122,60 @@ msgstr ""
 
 msgid "Recommended: 60–100"
 msgstr ""
+
+msgid "Button/Link Text"
+msgstr ""
+
+msgid "Click"
+msgstr ""
+
+msgid "Effect"
+msgstr ""
+
+msgid "Emoji (for Emoji Rain)"
+msgstr ""
+
+msgid "FX Trigger Settings"
+msgstr ""
+
+msgid "HTML Tag"
+msgstr ""
+
+msgid "Hover"
+msgstr ""
+
+msgid "Trigger On"
+msgstr ""
+
+msgid "e.g. a, button, span"
+msgstr ""
+
+#: blocks/fx-trigger/block.json
+msgctxt "block title"
+msgid "FX Trigger"
+msgstr ""
+
+#: blocks/fx-trigger/block.json
+msgctxt "block description"
+msgid "Insert a link or button that fires a visual effect (fireworks, emoji rain, etc.) on click or hover."
+msgstr ""
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "fx"
+msgstr ""
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "effect"
+msgstr ""
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "fireworks"
+msgstr ""
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "init"
+msgstr ""

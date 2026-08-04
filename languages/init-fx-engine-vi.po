@@ -125,3 +125,60 @@ msgstr "Độ trong suốt"
 
 msgid "Recommended: 60–100"
 msgstr "Khuyến nghị: 60–100"
+
+msgid "Button/Link Text"
+msgstr "Văn bản nút/link"
+
+msgid "Click"
+msgstr "Click"
+
+msgid "Effect"
+msgstr "Hiệu ứng"
+
+msgid "Emoji (for Emoji Rain)"
+msgstr "Emoji (dùng cho Emoji Rain)"
+
+msgid "FX Trigger Settings"
+msgstr "Cài đặt FX Trigger"
+
+msgid "HTML Tag"
+msgstr "Thẻ HTML"
+
+msgid "Hover"
+msgstr "Hover"
+
+msgid "Trigger On"
+msgstr "Kích hoạt khi"
+
+msgid "e.g. a, button, span"
+msgstr "vd: a, button, span"
+
+#: blocks/fx-trigger/block.json
+msgctxt "block title"
+msgid "FX Trigger"
+msgstr "FX Trigger"
+
+#: blocks/fx-trigger/block.json
+msgctxt "block description"
+msgid "Insert a link or button that fires a visual effect (fireworks, emoji rain, etc.) on click or hover."
+msgstr "Chèn 1 link hoặc nút bấm kích hoạt hiệu ứng thị giác (pháo hoa, mưa emoji...) khi click hoặc hover."
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "fx"
+msgstr "fx"
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "effect"
+msgstr "hiệu ứng"
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "fireworks"
+msgstr "pháo hoa"
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "init"
+msgstr "init"

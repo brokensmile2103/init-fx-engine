@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: Init FX Engine
- * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!
+ * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 1.6
+ * Version: 2.0.0
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
  * Domain Path: /languages
- * Requires at least: 5.5
- * Tested up to: 6.9
+ * Requires at least: 6.9
+ * Tested up to: 7.1
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '1.6' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '2.0.0' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
@@ -32,6 +32,7 @@ define( 'INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH',  INIT_PLUGIN_SUITE_FX_ENGIN
 
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'shortcodes.php';
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-page.php';
+require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'blocks.php';
 
 // === ENQUEUE JS ENGINE ===
 
@@ -342,8 +343,24 @@ add_action('wp_enqueue_scripts', function () {
     }
 
     // Nếu chọn chỉ chạy ở trang chủ → thoát nếu không phải homepage
-    if (!empty($snowfall['homepage_only']) && !is_front_page() && !is_home()) {
-        return;
+    if (!empty($snowfall['homepage_only'])) {
+        $front_page_id = (int) get_option('page_on_front');
+        $current_id    = (int) get_queried_object_id();
+
+        // Nếu có front page static
+        if ($front_page_id > 0) {
+
+            // Không đúng front page → thoát
+            if ($current_id !== $front_page_id) {
+                return;
+            }
+
+        } else {
+            // Trường hợp homepage = blog (no static front page)
+            if (!is_home()) {
+                return;
+            }
+        }
     }
 
     $should_run = false;

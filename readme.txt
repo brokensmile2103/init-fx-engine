@@ -1,18 +1,18 @@
 === Init FX Engine – Interactive, Event-Driven, Lightweight ===
 Contributors: brokensmile.2103
 Tags: animation, effect, confetti, comment, interaction
-Requires at least: 5.5
-Tested up to: 6.9
+Requires at least: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.6
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Bring your WordPress site to life with interactive visual effects triggered by keywords, comments, and special occasions.
+Bring your WordPress site to life with visual effects, now with native Block Editor support.
 
 == Description ==
 
-**Init FX Engine** brings modern, interactive visual effects to your WordPress site — from fireworks to snowfall, emoji rain, and more. All effects are fully customizable, and can be triggered via keywords, shortcodes, or special events.
+**Init FX Engine** brings modern, interactive visual effects to your WordPress site — from fireworks to snowfall, emoji rain, and more. All effects are fully customizable, and can be triggered via keywords, shortcodes, Block Editor blocks, or special events.
 
 > 🎉 Celebrate milestones with fireworks or cannon blasts  
 > 💬 Let users experience emoji reactions and heart rain in comments  
@@ -27,24 +27,41 @@ This plugin is part of the [Init Plugin Suite](https://en.inithtml.com/init-plug
 
 GitHub repository: [https://github.com/brokensmile2103/init-fx-engine](https://github.com/brokensmile2103/init-fx-engine)
 
+**What's New in v2.0.0:**
+- **Block Editor (Gutenberg) support**: a native **FX Trigger** block, grouped under its own **Init FX Engine** category in the block inserter. The block shares the exact same rendering code as its `[initfxen-fx]` shortcode counterpart, with a live preview right in the editor
+- **Requires at least** raised from 5.5 to 6.9
+
 **Highlights:**
+- Native Block Editor block: FX Trigger — with live preview in the editor
 - Interactive visual effects: Firework, Emoji Rain, Heart Rain, Cannon Blast, Starlight, Celebration Burst
 - Preloader (loading screen) with 6 styles: Dot Dot Dot, Bar, Logo, Flower, Spinner, Emoji
 - Supports gradient or solid background for preloader
 - Auto-fetch favicon for logo-based animation
 - Snowfall effect with date scheduler (auto/custom)
 - Grayscale mode (manual or scheduled)
-- Shortcode `[init-fx-ambient]` for ambient background animation
+- Shortcode `[initfxen-fx-ambient]` for ambient background animation
 - Keywords to trigger effects inside comments or post content
 - Real-time preview of effects in settings page
 - Lightweight, extensible, and multilingual-ready
+
+== Block Editor (Gutenberg) ==
+
+A native block is available under its own **Init FX Engine** category in the block inserter — no shortcode needed if you prefer working entirely in the editor:
+
+- **FX Trigger** — equivalent to `[initfxen-fx]`. A link or button that fires a visual effect (fireworks, emoji rain, etc.) on click or hover
+
+The block shares the exact same rendering code as its shortcode, so switching between the Block Editor and shortcode never changes the output. Block settings map directly to shortcode attributes, and a live preview is shown right in the editor as you configure it.
+
+Note: the `[initfxen-fx-ambient]` shortcode does not have a block equivalent in this release — its rendering behavior wasn't stable enough to bring into the Block Editor yet. The shortcode itself is unaffected and continues to work exactly as before.
+
+Note: this plugin does not include Abilities API support. It has no data to read or write — everything it does is a purely visual, client-side effect — so there is nothing meaningful for an AI agent or automation tool to query here.
 
 == Installation ==
 
 1. Upload the plugin folder to `/wp-content/plugins/`.
 2. Activate the plugin from the “Plugins” screen.
 3. Go to **Settings → Init FX Engine** to configure effects.
-4. Optionally insert `[init-fx-ambient]` into posts or templates.
+4. Optionally insert `[initfxen-fx-ambient]` into posts or templates, or add the equivalent block in the Block Editor.
 
 == Frequently Asked Questions ==
 
@@ -67,6 +84,12 @@ Yes. You can format text using simple markers:
 2. Snowfall effect scheduled automatically or set with custom dates.
 
 == Changelog ==
+
+= 2.0.0 – August 4, 2026 =
+- **New: Block Editor (Gutenberg) support**: a native **FX Trigger** block (equivalent to `[initfxen-fx]`), grouped under its own **Init FX Engine** block category (instead of the generic "Widgets" category). Registered via `block.json` (with a PHP `render.php` file wired through the `"render"` field, WP 6.1+) that calls the exact same shortcode function as its shortcode counterpart — no duplicated display logic, output always matches. The editor integration is a single, no-build-step vanilla JavaScript file using `wp.serverSideRender` for a live preview directly in the editor. The `[initfxen-fx-ambient]` shortcode does not get a block equivalent in this release — its rendering behavior wasn't stable enough yet; the shortcode itself is unaffected
+- **Changed**: `Requires at least` raised from 5.5 to 6.9, for consistency with the rest of the Init Plugin Suite's 2.0.0 releases
+- **Note**: this release does not add Abilities API support. This plugin has no data to read or write — everything it does is a purely visual, client-side effect — so there is nothing meaningful for an AI agent to query
+- **Tested up to: 7.1**
 
 = 1.6 – December 17, 2025 =
 - **Enhancement**: Added advanced Snowfall configuration options — control snow amount, size, fall speed, and opacity

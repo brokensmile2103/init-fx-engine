@@ -1,0 +1,40 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "init-fx-engine/fx-trigger",
+    "title": "FX Trigger",
+    "category": "init-fx-engine",
+    "icon": "star-filled",
+    "description": "Insert a link or button that fires a visual effect (fireworks, emoji rain, etc.) on click or hover.",
+    "keywords": ["fx", "effect", "fireworks", "init"],
+    "textdomain": "init-fx-engine",
+    "attributes": {
+        "text": {
+            "type": "string",
+            "default": ""
+        },
+        "fx": {
+            "type": "string",
+            "default": "firework"
+        },
+        "emoji": {
+            "type": "string",
+            "default": ""
+        },
+        "shoot": {
+            "type": "string",
+            "default": "click"
+        },
+        "tag": {
+            "type": "string",
+            "default": "a"
+        }
+    },
+    "supports": {
+        "html": false,
+        "className": false,
+        "customClassName": false
+    },
+    "editorScript": "init-fx-engine-blocks-editor",
+    "render": "file:./render.php"
+}
