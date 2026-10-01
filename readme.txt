@@ -127,6 +127,7 @@ Yes. You can format text using simple markers:
 - **New library**: [fireworks-js](https://github.com/crashmax-dev/fireworks-js) 2.10.8 (MIT) for the realistic Fireworks Show. It is lazy-loaded only when the effect actually runs; if it cannot load, the classic confetti firework is used instead
 - **New: JavaScript API** — `FXEngine.trigger( name, options )`, `FXEngine.register( name, fn )` and `FXEngine.effects()` (the `FXEngine.trigger` call mentioned in the FAQ now actually exists)
 - **Settings**: Seasonal Effects section with a live **Preview** button, the upcoming holiday calendar and a "today visitors will see" indicator; preview buttons for every new effect
+- **Settings**: the settings page is now organized into clear sections (Preloader, Keyword Effects, Snowfall, Seasonal Effects, Grayscale, Inline Formatting), one setting per row with proper labels. Field names are unchanged, so existing settings are kept
 - **Performance**: the seasonal renderer draws pre-rendered emoji sprites on a single canvas, starts after page load via `requestIdleCallback`, pauses while the tab is hidden, caps device pixel ratio at 2, reduces particles on small screens and respects `prefers-reduced-motion`
 - **Performance**: inline formatting no longer serializes the whole page (`innerHTML`) to look for spoilers, and skips text nodes without any formatting marker before running its regular expressions
 - **Performance**: emoji/heart shapes are cached instead of being rebuilt on every effect, and all "in-view" shortcodes share a single `IntersectionObserver`

@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const seasonalBtn = document.querySelector('.fx-seasonal-preview-btn');
     if (seasonalBtn) {
         seasonalBtn.addEventListener('click', () => {
-            const box = seasonalBtn.closest('td');
+            const box = seasonalBtn.closest('.fx-seasonal-settings') || document;
             const fx = window.INIT_FX || {};
             const themes = fx.seasonalThemes || {};
             const value = (selector) => {
