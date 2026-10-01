@@ -251,11 +251,6 @@ msgstr "init"
 msgid "https://inithtml.com/plugin/init-fx-engine/"
 msgstr ""
 
-#. Description of the plugin
-#: init-fx-engine.php
-msgid "Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes (Halloween, Christmas, New Year, Lunar New Year, Mid-Autumn) — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!"
-msgstr "Thêm hiệu ứng trực quan sinh động như pháo hoa, mưa emoji, tuyết rơi và khung cảnh lễ hội theo mùa (Halloween, Giáng sinh, Năm mới, Tết Nguyên Đán, Trung Thu) — được kích hoạt bởi bình luận, từ khóa hoặc dịp lễ. Hỗ trợ Block Editor gốc. Để trang WordPress của bạn trở nên sống động!"
-
 #. Author of the plugin
 #: init-fx-engine.php
 msgid "Init HTML"
@@ -473,3 +468,8 @@ msgstr "Hiệu ứng chào mừng"
 #: includes/settings-seasonal.php:173
 msgid "Accessibility"
 msgstr "Trợ năng"
+
+#. Description of the plugin
+#: init-fx-engine.php
+msgid "Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!"
+msgstr "Thêm hiệu ứng trực quan sinh động như pháo hoa, mưa emoji, tuyết rơi và khung cảnh lễ hội theo mùa — được kích hoạt bởi bình luận, từ khóa hoặc dịp lễ. Hỗ trợ Block Editor gốc. Để trang WordPress của bạn trở nên sống động!"

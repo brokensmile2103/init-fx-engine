@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Init FX Engine
- * Description: Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes (Halloween, Christmas, New Year, Lunar New Year, Mid-Autumn) — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!
+ * Description: Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
  * Version: 2.0.1
  * Author: Init HTML
