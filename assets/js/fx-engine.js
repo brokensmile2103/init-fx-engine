@@ -1,20 +1,46 @@
-window.runEffect = function(name, options) {
-    const effects = {
-        firework,
-        starlightBurst,
-        emojiRain,
-        schoolPride,
-        celebrationBurst,
-        heartRain,
-        cannonBlast
-    };
+// === EFFECT REGISTRY ===
+// Dùng var (không dùng const/let ở top-level) để file có lỡ bị nạp 2 lần cũng không lỗi redeclare.
+var INIT_FX_EFFECTS = window.INIT_FX_EFFECTS = window.INIT_FX_EFFECTS || {};
 
-    if (effects[name]) {
-        effects[name](options);
+window.runEffect = function(name, options) {
+    const effect = INIT_FX_EFFECTS[name];
+
+    if (typeof effect === 'function') {
+        effect(options);
     } else {
         console.warn('Unknown effect:', name);
     }
 };
+
+// Public API: FXEngine.trigger('firework'), FXEngine.register('myEffect', fn)
+window.FXEngine = window.FXEngine || {};
+window.FXEngine.trigger = function(name, options) {
+    window.runEffect(name, options);
+};
+window.FXEngine.register = function(name, fn) {
+    if (name && typeof fn === 'function') INIT_FX_EFFECTS[name] = fn;
+};
+window.FXEngine.effects = function() {
+    return Object.keys(INIT_FX_EFFECTS);
+};
+
+// === SHAPE CACHE ===
+// confetti.shapeFromText/shapeFromPath tạo canvas + bitmap mỗi lần gọi → cache lại để bấm nhiều lần không tốn thêm.
+var fxShapeCache = window.__initFxShapeCache = window.__initFxShapeCache || new Map();
+
+function fxTextShape(text, scalar) {
+    const key = 't|' + text + '|' + scalar;
+    let shape = fxShapeCache.get(key);
+    if (!shape) {
+        shape = confetti.shapeFromText({ text, scalar });
+        fxShapeCache.set(key, shape);
+    }
+    return shape;
+}
+
+function fxRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
 
 // === EFFECT DEFINITIONS ===
 
@@ -91,7 +117,7 @@ function starlightBurst() {
 
 function emojiRain(emoji = '😂') {
     const scalar = 2;
-    const shape = confetti.shapeFromText({ text: emoji, scalar });
+    const shape = fxTextShape(emoji || '😂', scalar);
 
     const defaults = {
         spread: 360,
@@ -136,10 +162,14 @@ function celebrationBurst() {
 }
 
 function heartRain() {
-    const heart = confetti.shapeFromPath({
-        path: 'M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z',
-        matrix: [0.03333333333333333, 0, 0, 0.03333333333333333, -5.566666666666666, -5.533333333333333]
-    });
+    let heart = fxShapeCache.get('p|heart');
+    if (!heart) {
+        heart = confetti.shapeFromPath({
+            path: 'M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z',
+            matrix: [0.03333333333333333, 0, 0, 0.03333333333333333, -5.566666666666666, -5.533333333333333]
+        });
+        fxShapeCache.set('p|heart', heart);
+    }
 
     const duration = 4000;
     const end = Date.now() + duration;
@@ -169,6 +199,235 @@ function cannonBlast() {
         origin: { y: 0.6 }
     });
 }
+
+// === SEASONAL EFFECTS (v2.0.1) ===
+
+// 🎃 Halloween: bí ngô, ma, dơi nổ tung + confetti cam/tím
+function halloweenBurst() {
+    const scalar = 2.4;
+    const shapes = ['🎃', '👻', '🦇'].map(t => fxTextShape(t, scalar));
+    const defaults = {
+        spread: 360,
+        ticks: 90,
+        gravity: 0.45,
+        decay: 0.94,
+        startVelocity: 26,
+        zIndex: 1000
+    };
+
+    function shoot() {
+        confetti({ ...defaults, particleCount: 14, shapes, scalar, flat: true });
+        confetti({
+            ...defaults,
+            particleCount: 26,
+            scalar: 0.9,
+            shapes: ['circle', 'square'],
+            colors: ['#ff7518', '#6b2fa0', '#1b1b1b', '#ffb347', '#39ff14']
+        });
+    }
+
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 150);
+    setTimeout(shoot, 300);
+}
+
+// 🧧 Tết: lì xì + hoa đào, hoa mai rơi từ trên xuống, kèm kim tuyến đỏ/vàng
+function luckyMoney() {
+    const scalar = 2.2;
+    const shapes = ['🧧', '🌸', '🌼'].map(t => fxTextShape(t, scalar));
+    const colors = ['#d4141c', '#ffcc00', '#ff4d4d', '#ffd700', '#fff1a8'];
+    const end = Date.now() + 3500;
+    let tick = 0;
+
+    (function frame() {
+        // Phát hạt mỗi 3 frame thay vì mọi frame → vẫn dày nhưng nhẹ CPU hơn.
+        if (tick++ % 3 === 0) {
+            confetti({
+                particleCount: 1,
+                startVelocity: 0,
+                ticks: 320,
+                gravity: 0.55,
+                drift: fxRandom(-0.4, 0.4),
+                origin: { x: Math.random(), y: -0.05 },
+                shapes,
+                scalar,
+                flat: true,
+                zIndex: 1000
+            });
+            confetti({
+                particleCount: 3,
+                startVelocity: 0,
+                ticks: 260,
+                gravity: 0.7,
+                origin: { x: Math.random(), y: -0.05 },
+                colors,
+                shapes: ['square', 'circle'],
+                scalar: 0.9,
+                zIndex: 1000
+            });
+        }
+        if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+}
+
+// ❄️ Giáng sinh: bông tuyết bung ra từ giữa màn hình
+function snowBurst() {
+    const scalar = 2;
+    const flake = fxTextShape('❄️', scalar);
+    const defaults = {
+        spread: 360,
+        ticks: 120,
+        gravity: 0.3,
+        decay: 0.93,
+        startVelocity: 24,
+        origin: { y: 0.4 },
+        zIndex: 1000
+    };
+
+    function shoot() {
+        confetti({ ...defaults, particleCount: 16, shapes: [flake], scalar, flat: true });
+        confetti({ ...defaults, particleCount: 30, shapes: ['circle'], colors: ['#ffffff', '#dff4ff', '#b3e5ff'], scalar: 0.8 });
+    }
+
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 180);
+}
+
+// 🏮 Trung Thu: đèn lồng bay lên từ dưới đáy màn hình
+function lanternRise() {
+    const scalar = 2.4;
+    const shapes = ['🏮', '🏮', '🥮'].map(t => fxTextShape(t, scalar));
+    const end = Date.now() + 2500;
+    let tick = 0;
+
+    (function frame() {
+        if (tick++ % 6 === 0) {
+            confetti({
+                particleCount: 1,
+                angle: 90,
+                spread: 30,
+                startVelocity: fxRandom(14, 22),
+                decay: 0.97,
+                gravity: -0.12,
+                ticks: 360,
+                drift: fxRandom(-0.3, 0.3),
+                origin: { x: fxRandom(0.05, 0.95), y: 1.05 },
+                shapes,
+                scalar,
+                flat: true,
+                zIndex: 1000
+            });
+        }
+        if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+}
+
+// 🎆 Pháo hoa thật (fireworks-js, MIT) — chỉ tải thư viện khi thực sự cần (lazy load ~10KB).
+var fxFireworksLoader = null;
+var fxFireworksShow = null;
+var fxFireworksTimer = 0;
+
+function loadFireworksLib() {
+    const getCtor = () => window.Fireworks && (window.Fireworks.Fireworks || window.Fireworks.default);
+
+    if (getCtor()) return Promise.resolve(getCtor());
+    if (fxFireworksLoader) return fxFireworksLoader;
+
+    const src = window.INIT_FX && window.INIT_FX.assets && window.INIT_FX.assets.fireworks;
+    if (!src) return Promise.reject(new Error('fireworks-js URL missing'));
+
+    fxFireworksLoader = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = () => (getCtor() ? resolve(getCtor()) : reject(new Error('fireworks-js not available')));
+        script.onerror = () => reject(new Error('fireworks-js failed to load'));
+        document.head.appendChild(script);
+    }).catch(err => {
+        fxFireworksLoader = null; // cho phép thử lại lần sau
+        throw err;
+    });
+
+    return fxFireworksLoader;
+}
+
+function fireworksShow(options) {
+    const duration = Math.max(2000, Math.min(20000, Number(options) || 6000));
+
+    loadFireworksLib().then(Fireworks => {
+        const scheduleEnd = (show, holder) => {
+            clearTimeout(fxFireworksTimer);
+            fxFireworksTimer = setTimeout(() => {
+                // Gọi lại trong lúc đang tắt dần → tạo show mới thay vì dùng show sắp đóng.
+                if (fxFireworksShow && fxFireworksShow.show === show) fxFireworksShow = null;
+                holder.style.opacity = '0';
+                show.waitStop(true).then(() => {
+                    if (holder.parentNode) holder.parentNode.removeChild(holder);
+                });
+            }, duration);
+        };
+
+        // Đang bắn rồi → kéo dài show thay vì tạo thêm canvas mới.
+        // (Không dùng show.launch(): hàm này tự gọi waitStop() và sẽ kết thúc show sớm.)
+        if (fxFireworksShow) {
+            scheduleEnd(fxFireworksShow.show, fxFireworksShow.holder);
+            return;
+        }
+
+        const holder = document.createElement('div');
+        holder.className = 'init-fx-fireworks';
+        holder.setAttribute('aria-hidden', 'true');
+        // Nền "bầu trời đêm" mờ dần vào/ra → pháo hoa vẫn rực rỡ trên các theme nền trắng.
+        holder.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;pointer-events:none;overflow:hidden;background:rgba(6,10,32,0.6);opacity:0;transition:opacity .6s ease;';
+        document.body.appendChild(holder);
+        requestAnimationFrame(() => { holder.style.opacity = '1'; });
+
+        const show = new Fireworks(holder, {
+            autoresize: true,
+            opacity: 0.5,
+            acceleration: 1.05,
+            friction: 0.97,
+            gravity: 1.5,
+            particles: 60,
+            traceLength: 3,
+            traceSpeed: 10,
+            explosion: 6,
+            intensity: 30,
+            flickering: 50,
+            lineStyle: 'round',
+            hue: { min: 0, max: 360 },
+            delay: { min: 25, max: 50 },
+            rocketsPoint: { min: 20, max: 80 },
+            lineWidth: { explosion: { min: 1, max: 3 }, trace: { min: 1, max: 2 } },
+            brightness: { min: 50, max: 80 },
+            decay: { min: 0.015, max: 0.03 },
+            mouse: { click: false, move: false, max: 1 },
+            sound: { enabled: false }
+        });
+
+        fxFireworksShow = { show, holder };
+        show.start();
+        scheduleEnd(show, holder);
+    }).catch(() => {
+        // Không tải được thư viện → dùng pháo hoa confetti sẵn có.
+        firework();
+    });
+}
+
+Object.assign(INIT_FX_EFFECTS, {
+    firework,
+    starlightBurst,
+    emojiRain,
+    schoolPride,
+    celebrationBurst,
+    heartRain,
+    cannonBlast,
+    halloweenBurst,
+    luckyMoney,
+    snowBurst,
+    lanternRise,
+    fireworksShow
+});
 
 function replaceFXKeywordsInDOM(root = document.body) {
     if (typeof FX_KEYWORDS !== 'object' || !root) return;
@@ -274,7 +533,7 @@ function enhanceInlineFormatting(root = document.body) {
     const I18N = (window.INIT_FX && window.INIT_FX.i18n) || {};
     const SPOILER_LABEL = I18N.tap_to_reveal || 'Tap to reveal';
 
-    function ensureInlineAndSpoilerCSS(rootEl) {
+    function ensureInlineAndSpoilerCSS(rootEl, hasSpoiler) {
         // highlight only if exists
         if (rootEl.querySelector('.init-fx-highlight-text') && !document.getElementById('fx-highlight-style')) {
             const style = document.createElement('style');
@@ -289,8 +548,8 @@ function enhanceInlineFormatting(root = document.body) {
             `;
             document.head.appendChild(style);
         }
-        // spoiler only if '||' present or wrapper exists
-        if ((rootEl.innerHTML.includes('||') || rootEl.querySelector('.fx-spoiler')) && !document.getElementById('fx-spoiler-style')) {
+        // spoiler only if a wrapper was created/exists (không serialize innerHTML cả trang nữa → nhanh hơn nhiều)
+        if ((hasSpoiler || rootEl.querySelector('.fx-spoiler')) && !document.getElementById('fx-spoiler-style')) {
             const style = document.createElement('style');
             style.id = 'fx-spoiler-style';
             const label = JSON.stringify(SPOILER_LABEL);
@@ -337,6 +596,9 @@ function enhanceInlineFormatting(root = document.body) {
     ];
 
     const isSkippable = (el) => el.matches('script,style,pre,code');
+
+    // Lọc nhanh: text node không chứa ký tự đánh dấu nào thì bỏ qua, khỏi chạy 5 regex.
+    const MARKER_RX = /[*`~^_]/;
 
     function applyInlineRulesToTextNode(textNode) {
         let text = textNode.nodeValue;
@@ -445,6 +707,7 @@ function enhanceInlineFormatting(root = document.body) {
         const spoilerNodes = [];
         for (let n; (n = treeWalker1.nextNode()); ) spoilerNodes.push(n);
         spoilerNodes.forEach(n => processSpoilersInTextNode(n, SPOILER_LABEL));
+        const hasSpoiler = spoilerNodes.length > 0;
 
         // 2) Inline rules sau (để không “ăn” vào phần đã wrap)
         const treeWalker2 = document.createTreeWalker(
@@ -452,6 +715,7 @@ function enhanceInlineFormatting(root = document.body) {
             NodeFilter.SHOW_TEXT,
             {
                 acceptNode(node) {
+                    if (!node.nodeValue || !MARKER_RX.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
                     const p = node.parentNode;
                     if (!p || p.nodeType !== 1) return NodeFilter.FILTER_REJECT;
                     if (p.closest('.fx-spoiler')) return NodeFilter.FILTER_REJECT;
@@ -463,10 +727,13 @@ function enhanceInlineFormatting(root = document.body) {
         const textNodes = [];
         for (let m; (m = treeWalker2.nextNode()); ) textNodes.push(m);
         textNodes.forEach(applyInlineRulesToTextNode);
+
+        return hasSpoiler;
     }
 
-    ensureInlineAndSpoilerCSS(root);
-    walkAndApply(root, SPOILER_LABEL);
+    // Biến đổi DOM trước rồi mới chèn CSS (cùng 1 task, trước khi trình duyệt vẽ → không nháy).
+    const hasSpoiler = walkAndApply(root, SPOILER_LABEL);
+    ensureInlineAndSpoilerCSS(root, hasSpoiler);
 
     if (!root.__fxSpoilerBound) {
         root.addEventListener('click', (e) => {
@@ -504,7 +771,7 @@ function escapeRegExp(string) {
     return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initFxEngineBoot() {
     replaceFXKeywordsInDOM();
 
     const inlinefmtEnabled = !(window.INIT_FX && window.INIT_FX.inlinefmt && window.INIT_FX.inlinefmt.enabled === false);
@@ -513,7 +780,13 @@ document.addEventListener('DOMContentLoaded', () => {
         injectHighlightStyleIfNeeded();
     }
 
+    // 1 IntersectionObserver dùng chung cho mọi shortcode "in-view" (thay vì mỗi phần tử 1 observer).
+    let inViewObserver = null;
+
     document.querySelectorAll('.fx-shortcode').forEach(el => {
+        if (el.__fxBound) return;
+        el.__fxBound = true;
+
         const fx = el.dataset.effect;
         const emoji = el.dataset.emoji;
         const trigger = el.dataset.trigger || 'click';
@@ -533,14 +806,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        if (trigger === 'in-view') {
-            const observer = new IntersectionObserver(([entry]) => {
-                if (entry.isIntersecting) {
-                    runEffect(fx, emoji);
-                    observer.disconnect();
-                }
-            });
-            observer.observe(el);
+        if (trigger === 'in-view' && 'IntersectionObserver' in window) {
+            if (!inViewObserver) {
+                inViewObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        inViewObserver.unobserve(entry.target);
+                        runEffect(entry.target.dataset.effect, entry.target.dataset.emoji);
+                    });
+                });
+            }
+            inViewObserver.observe(el);
         }
     });
-});
+}
+
+// Chạy được cả khi script bị trì hoãn (defer/async/delay JS của plugin cache) sau DOMContentLoaded.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFxEngineBoot);
+} else {
+    initFxEngineBoot();
+}

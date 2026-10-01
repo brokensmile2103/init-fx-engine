@@ -1,10 +1,10 @@
 # Init FX Engine – Interactive, Event-Driven, Lightweight
 
-> Bring your WordPress site to life with fireworks, emoji rain, preloaders, and snowfall — all triggered by keywords, comments, special events, or a native Block Editor block.
+> Bring your WordPress site to life with fireworks, emoji rain, preloaders, snowfall and seasonal holiday scenes — all triggered by keywords, comments, special events, or a native Block Editor block.
 
 **Not just effects. A true FX Engine for WordPress.**
 
-[![Version](https://img.shields.io/badge/stable-v2.0.0-blue.svg)](https://wordpress.org/plugins/init-fx-engine/)
+[![Version](https://img.shields.io/badge/stable-v2.0.1-blue.svg)](https://wordpress.org/plugins/init-fx-engine/)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 ![Made with ❤️ in HCMC](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20in%20HCMC-blue)
 
@@ -15,6 +15,25 @@ From fireworks to snowfall, emoji rain to animated preloaders — all effects ar
 
 Perfect for celebrations, user engagement, or adding a touch of flair to your site.
 
+## What's New in v2.0.1
+
+- **Seasonal Effects**: holiday scenes floating over your site — 🎃 Halloween bats & ghosts, 🎄 Christmas, 🎉 New Year, 🌸 Tết (Lunar New Year) blossoms & lucky money, 💖 Valentine, 🏮 Mid-Autumn lanterns rising into the sky
+- **Built-in holiday calendar** with automatic theme switching — Tết and Mid-Autumn dates follow the Vietnamese lunar calendar (UTC+7), bundled through 2040 and filterable
+- **Themed greeting** once per visit: a real fireworks show on New Year, lucky money rain on Tết, and more
+- **5 new effects**: `halloweenBurst`, `luckyMoney`, `fireworksShow`, `snowBurst`, `lanternRise` — for keywords, `[initfxen-fx]` and the FX Trigger block
+- **New bundled library**: [fireworks-js](https://github.com/crashmax-dev/fireworks-js) (MIT), lazy-loaded only when the Fireworks Show actually runs
+- **JavaScript API**: `FXEngine.trigger(name, options)`, `FXEngine.register(name, fn)`, `FXEngine.effects()`
+- **Faster frontend**: sprite-based canvas renderer that pauses in hidden tabs, starts after page load and respects `prefers-reduced-motion`; lighter inline-formatting scan; cached confetti shapes
+
+### Developer filters
+
+| Filter | Purpose |
+| --- | --- |
+| `init_plugin_suite_fx_engine_seasonal_themes` | Add, remove or tweak seasonal themes (emojis, motion, glow, greeting) |
+| `init_plugin_suite_fx_engine_seasonal_window` | Change the built-in date window of a theme |
+| `init_plugin_suite_fx_engine_lunar_dates` | Add or override Tết / Mid-Autumn dates per year |
+| `init_plugin_suite_fx_engine_seasonal_config` | Alter the payload sent to the frontend |
+
 ## What's New in v2.0.0
 
 - **Block Editor (Gutenberg) support**: a native **FX Trigger** block, equivalent to `[initfxen-fx]`, grouped under its own **Init FX Engine** category in the block inserter. It shares the exact same rendering code as the shortcode, with a live preview right in the editor
@@ -24,10 +43,12 @@ Perfect for celebrations, user engagement, or adding a touch of flair to your si
 ## Features
 
 - Native Block Editor block: **FX Trigger** — with a live preview in the editor
-- Interactive visual effects: Fireworks, Emoji Rain, Heart Rain, Cannon Blast, Celebration Burst, Starlight
+- Interactive visual effects: Fireworks, Emoji Rain, Heart Rain, Cannon Blast, Celebration Burst, Starlight, Halloween Burst, Lucky Money, Fireworks Show, Snow Burst, Lantern Rise
 - Animated preloaders with 6 built-in styles (Dot, Bar, Logo, Flower, Spinner, Emoji)
 - Auto-fetch favicon for logo-based preloader
 - Snowfall effect with automatic or custom date scheduling
+- Seasonal Effects: Halloween, Christmas, New Year, Tết, Valentine, Mid-Autumn — automatic holiday calendar, custom schedule or always-on
+- Real fireworks show (fireworks-js) for New Year's Eve and celebrations
 - Grayscale mode (manual or scheduled) for solemn occasions
 - Shortcodes: `[initfxen-fx]` to trigger effects, `[initfxen-fx-ambient]` for background animation (legacy aliases `[init-fx]` / `[init-fx-ambient]` still work)
 - Comment/content keyword triggers for instant effects

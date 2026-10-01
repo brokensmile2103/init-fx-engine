@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Init FX Engine
- * Description: Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!
+ * Description: Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '2.0.0' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '2.0.1' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
 define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
@@ -33,6 +33,8 @@ define( 'INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH',  INIT_PLUGIN_SUITE_FX_ENGIN
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'shortcodes.php';
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-page.php';
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'blocks.php';
+require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'seasonal.php';
+require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-seasonal.php';
 
 // === ENQUEUE JS ENGINE ===
 
@@ -49,7 +51,7 @@ function init_plugin_suite_fx_engine_enqueue_scripts() {
     wp_enqueue_script(
         'init-plugin-suite-fx-engine',
         INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-engine.js',
-        [],
+        ['init-plugin-suite-fx-confetti'],
         INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
         true
     );
@@ -66,11 +68,13 @@ function init_plugin_suite_fx_engine_enqueue_scripts() {
         'init-plugin-suite-fx-engine',
         'window.INIT_FX = window.INIT_FX || {};
          window.INIT_FX.inlinefmt = ' . wp_json_encode($inlinefmt) . ';
-         window.INIT_FX.i18n = ' . wp_json_encode($i18n) . ';',
+         window.INIT_FX.i18n = ' . wp_json_encode($i18n) . ';
+         window.INIT_FX.assets = ' . wp_json_encode(init_plugin_suite_fx_engine_lazy_assets()) . ';',
         'before'
     );
 
     $raw_keywords = get_option('init_plugin_suite_fx_engine_keywords', []);
+    $raw_keywords = is_array($raw_keywords) ? $raw_keywords : [];
     $mapped = [];
 
     foreach ($raw_keywords as $effect => $raw) {
@@ -99,6 +103,17 @@ function init_plugin_suite_fx_engine_enqueue_scripts() {
 }
 
 /**
+ * Thư viện chỉ tải khi cần (lazy load) — fx-engine.js tự chèn <script> khi hiệu ứng được gọi.
+ *
+ * @return array
+ */
+function init_plugin_suite_fx_engine_lazy_assets() {
+    return [
+        'fireworks' => INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fireworks.min.js?ver=' . rawurlencode( INIT_PLUGIN_SUITE_FX_ENGINE_VERSION ),
+    ];
+}
+
+/**
  * PRELOADER - Anti-flash solution (FIXED VERSION)
  * - Che content ngay từ đầu bằng CSS critical
  * - Preloader show immediately, content hidden cho đến khi ready
@@ -123,9 +138,6 @@ add_action('wp_head', function () {
     ?>
     <style id="init-fx-critical-preloader">
         html.init-fx-preloading {
-            overflow: hidden !important;
-        }
-        html.init-fx-preloading body {
             overflow: hidden !important;
         }
         
@@ -160,29 +172,6 @@ add_action('wp_head', function () {
             transition: opacity 0.8s cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0s linear 0.8s !important;
         }
         
-        @keyframes preloaderFadeOut {
-            0% { 
-                opacity: 1;
-                visibility: visible;
-            }
-            95% {
-                opacity: 0.05;
-                visibility: visible;
-            }
-            100% { 
-                opacity: 0;
-                visibility: hidden;
-            }
-        }
-        
-        #init-fx-preloader.fx-animate-out {
-            animation: preloaderFadeOut 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
-        }
-
-        #init-fx-preloader {
-            z-index: 999999999 !important;
-        }
-
         html.init-fx-preloading #wpadminbar {
             visibility: hidden !important;
             opacity: 0 !important;
@@ -213,11 +202,6 @@ add_action('wp_head', function () {
 
         #init-fx-preloader * {
             z-index: inherit !important;
-        }
-
-        html.init-fx-preloading #wpadminbar {
-            visibility: hidden !important;
-            opacity: 0 !important;
         }
     </style>
     
@@ -343,24 +327,9 @@ add_action('wp_enqueue_scripts', function () {
     }
 
     // Nếu chọn chỉ chạy ở trang chủ → thoát nếu không phải homepage
-    if (!empty($snowfall['homepage_only'])) {
-        $front_page_id = (int) get_option('page_on_front');
-        $current_id    = (int) get_queried_object_id();
-
-        // Nếu có front page static
-        if ($front_page_id > 0) {
-
-            // Không đúng front page → thoát
-            if ($current_id !== $front_page_id) {
-                return;
-            }
-
-        } else {
-            // Trường hợp homepage = blog (no static front page)
-            if (!is_home()) {
-                return;
-            }
-        }
+    // (static front page hoặc blog home — xem includes/seasonal.php)
+    if (!empty($snowfall['homepage_only']) && !init_plugin_suite_fx_engine_is_homepage_request()) {
+        return;
     }
 
     $should_run = false;

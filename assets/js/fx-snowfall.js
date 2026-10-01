@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initFxSnowfallBoot() {
     if (!document.getElementById('particles-snow-js')) {
         const snowDiv = document.createElement('div');
         snowDiv.id = 'particles-snow-js';
@@ -19,7 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn('[Init FX Engine] particlesJS not found.');
     }
-});
+}
+
+// Chạy được cả khi script bị trì hoãn (defer/async/delay JS) sau DOMContentLoaded.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFxSnowfallBoot);
+} else {
+    initFxSnowfallBoot();
+}
 
 function fxClamp(n, min, max) {
     n = Number(n);
