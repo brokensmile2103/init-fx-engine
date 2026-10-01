@@ -29,6 +29,11 @@
 		{ label: __( 'Heart Rain', 'init-fx-engine' ), value: 'heartRain' },
 		{ label: __( 'School Pride', 'init-fx-engine' ), value: 'schoolPride' },
 		{ label: __( 'Celebration Burst', 'init-fx-engine' ), value: 'celebrationBurst' },
+		{ label: __( 'Halloween Burst', 'init-fx-engine' ), value: 'halloweenBurst' },
+		{ label: __( 'Lucky Money (Tết)', 'init-fx-engine' ), value: 'luckyMoney' },
+		{ label: __( 'Fireworks Show', 'init-fx-engine' ), value: 'fireworksShow' },
+		{ label: __( 'Snow Burst', 'init-fx-engine' ), value: 'snowBurst' },
+		{ label: __( 'Lantern Rise', 'init-fx-engine' ), value: 'lanternRise' },
 	];
 
 	// ---------------------------------------------------------------------

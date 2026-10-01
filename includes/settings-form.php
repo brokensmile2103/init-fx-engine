@@ -18,7 +18,12 @@
             'cannonBlast'      => __('Cannon Blast', 'init-fx-engine'),
             'heartRain'        => __('Heart Rain', 'init-fx-engine'),
             'schoolPride'      => __('School Pride', 'init-fx-engine'),
-            'celebrationBurst' => __('Celebration Burst', 'init-fx-engine')
+            'celebrationBurst' => __('Celebration Burst', 'init-fx-engine'),
+            'halloweenBurst'   => __('Halloween Burst', 'init-fx-engine'),
+            'luckyMoney'       => __('Lucky Money (Tết)', 'init-fx-engine'),
+            'fireworksShow'    => __('Fireworks Show', 'init-fx-engine'),
+            'snowBurst'        => __('Snow Burst', 'init-fx-engine'),
+            'lanternRise'      => __('Lantern Rise', 'init-fx-engine')
         ];
         ?>
 
@@ -157,6 +162,8 @@
                     </label>
                 </td>
             </tr>
+
+            <?php init_plugin_suite_fx_engine_render_seasonal_settings($seasonal); ?>
 
             <tr>
                 <th scope="row"><?php esc_html_e('Grayscale (Turn off full page color)', 'init-fx-engine'); ?></th>

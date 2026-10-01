@@ -31,14 +31,51 @@ add_action('admin_menu', function () {
             );
 
             wp_enqueue_script(
-                'init-plugin-suite-fx-engine-admin-preview',
-                INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/admin-preview.js',
+                'init-plugin-suite-fx-seasonal',
+                INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-seasonal.js',
                 ['init-plugin-suite-fx-engine'],
                 INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
                 true
             );
 
+            wp_enqueue_script(
+                'init-plugin-suite-fx-engine-admin-preview',
+                INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/admin-preview.js',
+                ['init-plugin-suite-fx-engine', 'init-plugin-suite-fx-seasonal'],
+                INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
+                true
+            );
+
             wp_add_inline_script('init-plugin-suite-fx-engine', 'window.initPluginSuiteFxEngine = window.initPluginSuiteFxEngine || {};');
+
+            // Dữ liệu cho nút Preview của Seasonal Effects (không autostart trong admin).
+            $today         = current_time('Y-m-d');
+            $preview_theme = init_plugin_suite_fx_engine_resolve_seasonal_theme(
+                ['theme' => 'auto', 'mode' => 'always'],
+                $today
+            );
+            $preview_themes = [];
+            foreach (init_plugin_suite_fx_engine_seasonal_themes() as $slug => $definition) {
+                $payload = init_plugin_suite_fx_engine_seasonal_payload(
+                    $slug,
+                    wp_parse_args(['emojis' => '', 'greeting' => true], init_plugin_suite_fx_engine_seasonal_defaults())
+                );
+                $preview_themes[$slug] = [
+                    'items'    => $payload['items'],
+                    'motion'   => $payload['motion'],
+                    'glow'     => $payload['glow'],
+                    'greeting' => $payload['greeting'],
+                ];
+            }
+
+            wp_add_inline_script(
+                'init-plugin-suite-fx-engine',
+                'window.INIT_FX = window.INIT_FX || {};
+                 window.INIT_FX.assets = ' . wp_json_encode(init_plugin_suite_fx_engine_lazy_assets()) . ';
+                 window.INIT_FX.seasonalThemes = ' . wp_json_encode($preview_themes) . ';
+                 window.INIT_FX.seasonalAutoTheme = ' . wp_json_encode($preview_theme) . ';',
+                'before'
+            );
         });
     });
 });
@@ -49,6 +86,15 @@ add_action('admin_init', function () {
     register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_grayscale', 'init_plugin_suite_fx_engine_sanitize_grayscale');
     register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_preloader', 'init_plugin_suite_fx_engine_sanitize_preloader');
     register_setting('init_plugin_suite_fx_engine_settings_group', 'init_plugin_suite_fx_engine_inlinefmt', 'init_plugin_suite_fx_engine_sanitize_inlinefmt');
+    register_setting(
+        'init_plugin_suite_fx_engine_settings_group',
+        'init_plugin_suite_fx_engine_seasonal',
+        [
+            'type'              => 'array',
+            'sanitize_callback' => 'init_plugin_suite_fx_engine_sanitize_seasonal',
+            'default'           => init_plugin_suite_fx_engine_seasonal_defaults(),
+        ]
+    );
 });
 
 function init_plugin_suite_fx_engine_settings_page() {
@@ -61,7 +107,12 @@ function init_plugin_suite_fx_engine_settings_page() {
         'cannonBlast'      => 'happy birthday',
         'heartRain'        => 'yêu quá',
         'schoolPride'      => 'tuyệt vời',
-        'celebrationBurst' => 'hoan hô'
+        'celebrationBurst' => 'hoan hô',
+        'halloweenBurst'   => 'halloween',
+        'luckyMoney'       => 'lì xì',
+        'fireworksShow'    => 'năm mới',
+        'snowBurst'        => 'giáng sinh',
+        'lanternRise'      => 'trung thu'
     ]);
 
     $snowfall = get_option('init_plugin_suite_fx_engine_snowfall', [
@@ -95,11 +146,16 @@ function init_plugin_suite_fx_engine_settings_page() {
         'enabled' => true,
     ]);
 
+    $seasonal = init_plugin_suite_fx_engine_get_seasonal_settings();
+
     include INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-form.php';
 }
 
 function init_plugin_suite_fx_engine_sanitize_keywords($input) {
     $output = [];
+    if (!is_array($input)) {
+        return $output;
+    }
     foreach ($input as $key => $value) {
         $output[$key] = trim(wp_kses_post($value));
     }

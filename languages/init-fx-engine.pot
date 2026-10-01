@@ -1,152 +1,376 @@
+# Copyright (C) 2026 Init HTML
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Init FX Engine 1.0\n"
-"Language: vi\n"
+"Project-Id-Version: Init FX Engine 2.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/init-fx-engine\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-01T09:40:50+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: init-fx-engine\n"
 
+#. Plugin Name of the plugin
+#: init-fx-engine.php
+#: includes/blocks.php:44
+#: includes/settings-page.php:8
+msgid "Init FX Engine"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: init-fx-engine.php
+msgid "https://inithtml.com/plugin/init-fx-engine/"
+msgstr ""
+
+#. Description of the plugin
+#: init-fx-engine.php
+msgid "Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes (Halloween, Christmas, New Year, Lunar New Year, Mid-Autumn) — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!"
+msgstr ""
+
+#. Author of the plugin
+#: init-fx-engine.php
+msgid "Init HTML"
+msgstr ""
+
+#. Author URI of the plugin
+#: init-fx-engine.php
+msgid "https://inithtml.com/"
+msgstr ""
+
+#: includes/seasonal.php:70
+msgid "Halloween"
+msgstr ""
+
+#: includes/seasonal.php:77
+msgid "Christmas"
+msgstr ""
+
+#: includes/seasonal.php:84
+msgid "New Year"
+msgstr ""
+
+#: includes/seasonal.php:91
+msgid "Lunar New Year (Tết)"
+msgstr ""
+
+#: includes/seasonal.php:98
+msgid "Valentine"
+msgstr ""
+
+#: includes/seasonal.php:105
+msgid "Mid-Autumn Festival"
+msgstr ""
+
+#: includes/settings-form.php:4
+#: includes/settings-page.php:7
 msgid "Init FX Engine Settings"
 msgstr ""
 
-msgid "Settings"
-msgstr ""
-
-msgid "Add interactive visual effects like fireworks, emoji rain, and snowfall — triggered by comments, keywords, or holidays. Make your WordPress site come alive!"
-msgstr ""
-
+#: includes/settings-form.php:15
+#: assets/js/blocks-editor.js:25
 msgid "Firework"
 msgstr ""
 
+#: includes/settings-form.php:16
+#: assets/js/blocks-editor.js:26
 msgid "Starlight Burst"
 msgstr ""
 
+#: includes/settings-form.php:17
+#: assets/js/blocks-editor.js:27
 msgid "Emoji Rain"
 msgstr ""
 
+#: includes/settings-form.php:17
 msgid "Format: keyword:emoji, keyword:emoji"
 msgstr ""
 
+#: includes/settings-form.php:18
+#: assets/js/blocks-editor.js:28
 msgid "Cannon Blast"
 msgstr ""
 
+#: includes/settings-form.php:19
+#: assets/js/blocks-editor.js:29
 msgid "Heart Rain"
 msgstr ""
 
+#: includes/settings-form.php:20
+#: assets/js/blocks-editor.js:30
 msgid "School Pride"
 msgstr ""
 
+#: includes/settings-form.php:21
+#: assets/js/blocks-editor.js:31
 msgid "Celebration Burst"
 msgstr ""
 
-msgid "Preview"
+#: includes/settings-form.php:22
+#: assets/js/blocks-editor.js:32
+msgid "Halloween Burst"
 msgstr ""
 
-msgid "Effect Preview:"
+#: includes/settings-form.php:23
+#: assets/js/blocks-editor.js:33
+msgid "Lucky Money (Tết)"
 msgstr ""
 
-msgid "Click any “Preview” button to see it in action."
+#: includes/settings-form.php:24
+#: assets/js/blocks-editor.js:34
+msgid "Fireworks Show"
 msgstr ""
 
-msgid "Enable snowfall effect on site"
+#: includes/settings-form.php:25
+#: assets/js/blocks-editor.js:35
+msgid "Snow Burst"
 msgstr ""
 
-msgid "Snowfall Effect"
+#: includes/settings-form.php:26
+#: assets/js/blocks-editor.js:36
+msgid "Lantern Rise"
 msgstr ""
 
-msgid "Auto schedule (Dec 20 – Dec 31)"
-msgstr ""
-
-msgid "Custom schedule"
-msgstr ""
-
-msgid "Start Date"
-msgstr ""
-
-msgid "End Date"
-msgstr ""
-
-msgid "Grayscale (Turn off full page color)"
-msgstr ""
-
-msgid "Enable grayscale effect on site"
-msgstr ""
-
-msgid "Always on"
-msgstr ""
-
+#: includes/settings-form.php:32
 msgid "Preloader (Loading screen)"
 msgstr ""
 
+#: includes/settings-form.php:36
 msgid "Enable loading screen before page fully loads"
 msgstr ""
 
+#: includes/settings-form.php:40
 msgid "Style"
 msgstr ""
 
+#: includes/settings-form.php:57
 msgid "Background Color"
 msgstr ""
 
+#: includes/settings-form.php:62
 msgid "Use a single color or comma-separated values for gradient."
 msgstr ""
 
+#: includes/settings-form.php:69
 msgid "Only show on first visit in a session"
 msgstr ""
 
-msgid "Inline Formatting"
+#: includes/settings-form.php:87
+#: includes/settings-seasonal.php:51
+msgid "Preview"
 msgstr ""
 
-msgid "Apply inline formatting in text"
+#: includes/settings-form.php:94
+msgid "Snowfall Effect"
 msgstr ""
 
-msgid "When enabled, the engine will parse simple inline markup in outputs."
+#: includes/settings-form.php:98
+msgid "Enable snowfall effect on site"
 msgstr ""
 
-msgid "Tap to reveal"
+#: includes/settings-form.php:103
+msgid "Auto schedule (Dec 20 – Dec 31)"
 msgstr ""
 
+#: includes/settings-form.php:106
+#: includes/settings-form.php:181
+#: includes/settings-seasonal.php:61
+msgid "Custom schedule"
+msgstr ""
+
+#: includes/settings-form.php:109
+#: includes/settings-form.php:184
+#: includes/settings-seasonal.php:70
+msgid "Start Date"
+msgstr ""
+
+#: includes/settings-form.php:113
+#: includes/settings-form.php:188
+#: includes/settings-seasonal.php:74
+msgid "End Date"
+msgstr ""
+
+#: includes/settings-form.php:122
 msgid "Show snowfall effect on homepage only"
 msgstr ""
 
+#: includes/settings-form.php:126
 msgid "Snow amount"
 msgstr ""
 
-msgid "Snow size"
-msgstr ""
-
-msgid "Fall speed"
-msgstr ""
-
-msgid "Opacity"
-msgstr ""
-
+#: includes/settings-form.php:132
 msgid "Recommended: 60–100"
 msgstr ""
 
-msgid "Button/Link Text"
+#: includes/settings-form.php:137
+msgid "Snow size"
 msgstr ""
 
-msgid "Click"
+#: includes/settings-form.php:147
+msgid "Fall speed"
 msgstr ""
 
-msgid "Effect"
+#: includes/settings-form.php:157
+#: includes/settings-seasonal.php:170
+msgid "Opacity"
 msgstr ""
 
-msgid "Emoji (for Emoji Rain)"
+#: includes/settings-form.php:169
+msgid "Grayscale (Turn off full page color)"
 msgstr ""
 
+#: includes/settings-form.php:173
+msgid "Enable grayscale effect on site"
+msgstr ""
+
+#: includes/settings-form.php:178
+msgid "Always on"
+msgstr ""
+
+#: includes/settings-form.php:196
+msgid "Inline Formatting"
+msgstr ""
+
+#: includes/settings-form.php:202
+msgid "Apply inline formatting in text"
+msgstr ""
+
+#: includes/settings-form.php:206
+msgid "When enabled, the engine will parse simple inline markup in outputs."
+msgstr ""
+
+#: includes/settings-seasonal.php:29
+msgid "Seasonal Effects"
+msgstr ""
+
+#: includes/settings-seasonal.php:32
+msgid "Holiday scenes floating over your site: Halloween bats, Tết blossoms and lucky money, Mid-Autumn lanterns, New Year fireworks and more."
+msgstr ""
+
+#: includes/settings-seasonal.php:37
+msgid "Enable seasonal effects on site"
+msgstr ""
+
+#: includes/settings-seasonal.php:41
+msgid "Theme"
+msgstr ""
+
+#: includes/settings-seasonal.php:43
+msgid "Auto (follow the holiday calendar)"
+msgstr ""
+
+#: includes/settings-seasonal.php:56
+msgid "Built-in holiday calendar"
+msgstr ""
+
+#: includes/settings-seasonal.php:66
+msgid "Always on (useful for testing)"
+msgstr ""
+
+#: includes/settings-seasonal.php:80
+msgid "Holiday calendar"
+msgstr ""
+
+#. translators: 1: holiday name, 2: start date, 3: end date.
+#: includes/settings-seasonal.php:96
+#, php-format
+msgid "%1$s: %2$s – %3$s"
+msgstr ""
+
+#: includes/settings-seasonal.php:104
+msgid "happening now"
+msgstr ""
+
+#. translators: %s: holiday theme name.
+#: includes/settings-seasonal.php:117
+#, php-format
+msgid "Today visitors will see: %s"
+msgstr ""
+
+#: includes/settings-seasonal.php:124
+msgid "No seasonal effect is scheduled for today."
+msgstr ""
+
+#: includes/settings-seasonal.php:129
+msgid "Show seasonal effects on homepage only"
+msgstr ""
+
+#: includes/settings-seasonal.php:134
+msgid "Play a themed greeting effect once per visit (e.g. fireworks show on New Year, lucky money on Tết)"
+msgstr ""
+
+#: includes/settings-seasonal.php:139
+msgid "Respect the visitor's \"reduce motion\" system setting"
+msgstr ""
+
+#: includes/settings-seasonal.php:143
+msgid "Custom emojis"
+msgstr ""
+
+#: includes/settings-seasonal.php:148
+msgid "Optional. Comma-separated, up to 12 emojis. Leave empty to use the theme's own emojis."
+msgstr ""
+
+#: includes/settings-seasonal.php:151
+msgid "Amount"
+msgstr ""
+
+#: includes/settings-seasonal.php:155
+msgid "Recommended: 20–40. Automatically reduced on small screens."
+msgstr ""
+
+#: includes/settings-seasonal.php:158
+msgid "Size (px)"
+msgstr ""
+
+#: includes/settings-seasonal.php:164
+msgid "Speed"
+msgstr ""
+
+#: init-fx-engine.php:64
+msgid "Tap to reveal"
+msgstr ""
+
+#: init-fx-engine.php:466
+msgid "Settings"
+msgstr ""
+
+#: assets/js/blocks-editor.js:56
 msgid "FX Trigger Settings"
 msgstr ""
 
-msgid "HTML Tag"
+#: assets/js/blocks-editor.js:58
+msgid "Button/Link Text"
 msgstr ""
 
-msgid "Hover"
+#: assets/js/blocks-editor.js:65
+msgid "Effect"
 msgstr ""
 
+#: assets/js/blocks-editor.js:74
+msgid "Emoji (for Emoji Rain)"
+msgstr ""
+
+#: assets/js/blocks-editor.js:83
 msgid "Trigger On"
 msgstr ""
 
+#: assets/js/blocks-editor.js:86
+msgid "Click"
+msgstr ""
+
+#: assets/js/blocks-editor.js:87
+msgid "Hover"
+msgstr ""
+
+#: assets/js/blocks-editor.js:94
+msgid "HTML Tag"
+msgstr ""
+
+#: assets/js/blocks-editor.js:96
 msgid "e.g. a, button, span"
 msgstr ""
 
