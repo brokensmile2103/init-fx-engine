@@ -4,7 +4,7 @@
 
 **Not just effects. A true FX Engine for WordPress.**
 
-[![Version](https://img.shields.io/badge/stable-v2.0.2-blue.svg)](https://wordpress.org/plugins/init-fx-engine/)
+[![Version](https://img.shields.io/wordpress/plugin/v/init-fx-engine?label=stable)](https://wordpress.org/plugins/init-fx-engine/)
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 ![Made with ❤️ in HCMC](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20in%20HCMC-blue)
 
@@ -15,28 +15,19 @@ From fireworks to snowfall, particle backgrounds to full holiday scenes — all 
 
 Perfect for celebrations, user engagement, or adding a touch of flair to your site.
 
-## What's New in v2.0.2
-
-- **Smart loading**: canvas-confetti and `fx-engine.js` only load when keywords are set, on pages with an FX shortcode/block, or for the seasonal greeting. A page that uses nothing loads nothing
-- **Hand-drawn seasonal scenes** on canvas: crystal snowflakes, blossoms, lucky money, lanterns, hearts, bats, ghosts, glitter — plus decorations (string lights, Tết lanterns, full moon, spider webs) and opt-in click bursts
-- **Faster Snowfall**: own canvas renderer replaces particles.js, with depth, wind, crystal flakes and a Preview button
-- **Particle backgrounds** powered by [tsParticles](https://github.com/tsparticles/tsparticles): 6 presets for `[initfxen-fx-ambient]` and a new **FX Ambient Section** block with live editor preview
-- **New effect**: `blossomRain` (Tết petals)
-- **Nicer spoilers**: blurred background, label auto-hidden on short spoilers
-- **Fixes**: shortcode tag allow-list (security), Grayscale breaking `position: fixed`, Safari < 16.4 crash, and more — see the [changelog](https://wordpress.org/plugins/init-fx-engine/#developers)
-
 ## Features
 
 - Native Block Editor blocks: **FX Trigger** and **FX Ambient Section** — with live preview in the editor
 - Interactive effects: Fireworks, Emoji Rain, Heart Rain, Cannon Blast, Celebration Burst, Starlight, Halloween Burst, Lucky Money, Blossom Rain, Fireworks Show, Snow Burst, Lantern Rise
 - Seasonal Effects: Halloween, Christmas, New Year, Tết, Valentine, Mid-Autumn — automatic holiday calendar (lunar dates through 2040), custom schedule or always-on
 - Particle backgrounds: network links, stars, snow, bubbles, fireflies, emoji
-- Snowfall with automatic or custom date scheduling
+- Snowfall with automatic or custom scheduling — classic round flakes with random depth, soft glow or crystal styles, custom color, wind, battery saver mode
 - Animated preloaders with 6 styles (Dot, Bar, Logo, Flower, Spinner, Emoji)
 - Grayscale mode (manual or scheduled) for solemn occasions
 - Keyword triggers in comments and content
 - Inline formatting: `*bold*`, `~strike~`, `` `italic` ``, `^highlight^`, `_neon_`, `||spoiler||`
 - Settings page with real-time previews and a shortcode generator
+- Smart loading: each page only loads the scripts of the effects it actually uses
 - Respects `prefers-reduced-motion`, pauses in hidden tabs, multilingual-ready
 
 ## Shortcodes
@@ -47,6 +38,10 @@ Perfect for celebrations, user engagement, or adding a touch of flair to your si
 | `[initfxen-fx-ambient ambient="stars"]` | Particle background: `links`, `stars`, `snow`, `bubbles`, `fireflies`, `emoji` |
 
 Legacy aliases `[init-fx]` / `[init-fx-ambient]` still work.
+
+## Changelog
+
+See the full changelog on [WordPress.org](https://wordpress.org/plugins/init-fx-engine/#developers).
 
 ## Developers
 
