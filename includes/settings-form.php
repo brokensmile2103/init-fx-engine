@@ -211,10 +211,20 @@ $sections = array(
 					</th>
 					<td>
 						<select name="init_plugin_suite_fx_engine_snowfall[style]" id="init_fx_snowfall_style" class="fx-snowfall-style">
-							<option value="dots" <?php selected( $snowfall['style'], 'dots' ); ?>><?php esc_html_e( 'Soft dots (classic)', 'init-fx-engine' ); ?></option>
+							<option value="dots" <?php selected( $snowfall['style'], 'dots' ); ?>><?php esc_html_e( 'Classic round (random opacity, depth)', 'init-fx-engine' ); ?></option>
+							<option value="soft" <?php selected( $snowfall['style'], 'soft' ); ?>><?php esc_html_e( 'Soft glow', 'init-fx-engine' ); ?></option>
 							<option value="flakes" <?php selected( $snowfall['style'], 'flakes' ); ?>><?php esc_html_e( 'Crystal snowflakes', 'init-fx-engine' ); ?></option>
-							<option value="mixed" <?php selected( $snowfall['style'], 'mixed' ); ?>><?php esc_html_e( 'Mixed', 'init-fx-engine' ); ?></option>
+							<option value="mixed" <?php selected( $snowfall['style'], 'mixed' ); ?>><?php esc_html_e( 'Classic + crystal snowflakes', 'init-fx-engine' ); ?></option>
 						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="init_fx_snowfall_color"><?php esc_html_e( 'Snow color', 'init-fx-engine' ); ?></label>
+					</th>
+					<td>
+						<input type="color" name="init_plugin_suite_fx_engine_snowfall[color]" id="init_fx_snowfall_color" class="fx-snowfall-color" value="<?php echo esc_attr( $snowfall['color'] ); ?>">
+						<p class="description"><?php esc_html_e( 'White by default. A light blue or gray keeps the snow visible on light backgrounds.', 'init-fx-engine' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -265,7 +275,30 @@ $sections = array(
 					<td>
 						<label>
 							<input type="checkbox" name="init_plugin_suite_fx_engine_snowfall[wind]" id="init_fx_snowfall_wind" class="fx-snowfall-wind" value="1" <?php checked( ! empty( $snowfall['wind'] ) ); ?>>
-							<?php esc_html_e( 'Gentle wind gusts that slowly change direction', 'init-fx-engine' ); ?>
+							<?php esc_html_e( 'Gentle swaying and wind gusts that slowly change direction', 'init-fx-engine' ); ?>
+						</label>
+						<p class="description"><?php esc_html_e( 'Off: snow drifts down at slightly random angles, like previous versions.', 'init-fx-engine' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="init_fx_snowfall_fps"><?php esc_html_e( 'Performance', 'init-fx-engine' ); ?></label>
+					</th>
+					<td>
+						<select name="init_plugin_suite_fx_engine_snowfall[fps]" id="init_fx_snowfall_fps" class="fx-snowfall-fps">
+							<option value="60" <?php selected( (int) $snowfall['fps'], 60 ); ?>><?php esc_html_e( 'Smooth (60 fps)', 'init-fx-engine' ); ?></option>
+							<option value="30" <?php selected( (int) $snowfall['fps'], 30 ); ?>><?php esc_html_e( 'Battery saver (30 fps)', 'init-fx-engine' ); ?></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="init_fx_snowfall_hide_mobile"><?php esc_html_e( 'Small screens', 'init-fx-engine' ); ?></label>
+					</th>
+					<td>
+						<label>
+							<input type="checkbox" name="init_plugin_suite_fx_engine_snowfall[hide_mobile]" id="init_fx_snowfall_hide_mobile" value="1" <?php checked( ! empty( $snowfall['hide_mobile'] ) ); ?>>
+							<?php esc_html_e( 'Do not show snowfall on screens narrower than 768px', 'init-fx-engine' ); ?>
 						</label>
 					</td>
 				</tr>

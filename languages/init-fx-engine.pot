@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Init FX Engine 2.0.2\n"
+"Project-Id-Version: Init FX Engine 2.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/init-fx-engine\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-20T04:13:00+00:00\n"
+"POT-Creation-Date: 2026-11-20T04:59:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: init-fx-engine\n"
@@ -140,7 +140,7 @@ msgid "Seasonal Effects"
 msgstr ""
 
 #: includes/settings-form.php:42
-#: includes/settings-form.php:291
+#: includes/settings-form.php:324
 msgid "Particle Backgrounds"
 msgstr ""
 
@@ -149,7 +149,7 @@ msgid "Grayscale"
 msgstr ""
 
 #: includes/settings-form.php:44
-#: includes/settings-form.php:422
+#: includes/settings-form.php:455
 msgid "Inline Formatting"
 msgstr ""
 
@@ -168,8 +168,8 @@ msgstr ""
 
 #: includes/settings-form.php:72
 #: includes/settings-form.php:158
-#: includes/settings-form.php:376
-#: includes/settings-form.php:429
+#: includes/settings-form.php:409
+#: includes/settings-form.php:462
 #: includes/settings-seasonal.php:36
 msgid "Enable"
 msgstr ""
@@ -229,7 +229,7 @@ msgid "Enable snowfall effect on site"
 msgstr ""
 
 #: includes/settings-form.php:169
-#: includes/settings-form.php:386
+#: includes/settings-form.php:419
 #: includes/settings-seasonal.php:63
 msgid "Schedule"
 msgstr ""
@@ -239,31 +239,31 @@ msgid "Auto schedule (Dec 20 – Dec 31)"
 msgstr ""
 
 #: includes/settings-form.php:179
-#: includes/settings-form.php:396
+#: includes/settings-form.php:429
 #: includes/settings-seasonal.php:73
 msgid "Custom schedule"
 msgstr ""
 
 #: includes/settings-form.php:185
-#: includes/settings-form.php:407
+#: includes/settings-form.php:440
 #: includes/settings-seasonal.php:84
 msgid "Custom dates"
 msgstr ""
 
 #: includes/settings-form.php:187
-#: includes/settings-form.php:409
+#: includes/settings-form.php:442
 #: includes/settings-seasonal.php:86
 msgid "Start Date"
 msgstr ""
 
 #: includes/settings-form.php:191
-#: includes/settings-form.php:413
+#: includes/settings-form.php:446
 #: includes/settings-seasonal.php:90
 msgid "End Date"
 msgstr ""
 
 #: includes/settings-form.php:194
-#: includes/settings-form.php:416
+#: includes/settings-form.php:449
 #: includes/settings-seasonal.php:93
 msgid "Only used with the custom schedule."
 msgstr ""
@@ -282,191 +282,227 @@ msgid "Snow style"
 msgstr ""
 
 #: includes/settings-form.php:214
-msgid "Soft dots (classic)"
+msgid "Classic round (random opacity, depth)"
 msgstr ""
 
 #: includes/settings-form.php:215
-msgid "Crystal snowflakes"
+msgid "Soft glow"
 msgstr ""
 
 #: includes/settings-form.php:216
-msgid "Mixed"
+msgid "Crystal snowflakes"
 msgstr ""
 
-#: includes/settings-form.php:222
+#: includes/settings-form.php:217
+msgid "Classic + crystal snowflakes"
+msgstr ""
+
+#: includes/settings-form.php:223
+msgid "Snow color"
+msgstr ""
+
+#: includes/settings-form.php:227
+msgid "White by default. A light blue or gray keeps the snow visible on light backgrounds."
+msgstr ""
+
+#: includes/settings-form.php:232
 msgid "Snow amount"
 msgstr ""
 
-#: includes/settings-form.php:228
+#: includes/settings-form.php:238
 msgid "Recommended: 60–100"
 msgstr ""
 
-#: includes/settings-form.php:233
+#: includes/settings-form.php:243
 msgid "Snow size"
 msgstr ""
 
-#: includes/settings-form.php:243
+#: includes/settings-form.php:253
 msgid "Fall speed"
 msgstr ""
 
-#: includes/settings-form.php:253
+#: includes/settings-form.php:263
 #: includes/settings-seasonal.php:244
 msgid "Opacity"
 msgstr ""
 
-#: includes/settings-form.php:263
+#: includes/settings-form.php:273
 msgid "Wind"
 msgstr ""
 
-#: includes/settings-form.php:268
-msgid "Gentle wind gusts that slowly change direction"
+#: includes/settings-form.php:278
+msgid "Gentle swaying and wind gusts that slowly change direction"
 msgstr ""
 
-#: includes/settings-form.php:274
+#: includes/settings-form.php:280
+msgid "Off: snow drifts down at slightly random angles, like previous versions."
+msgstr ""
+
+#: includes/settings-form.php:285
+msgid "Performance"
+msgstr ""
+
+#: includes/settings-form.php:289
+msgid "Smooth (60 fps)"
+msgstr ""
+
+#: includes/settings-form.php:290
+msgid "Battery saver (30 fps)"
+msgstr ""
+
+#: includes/settings-form.php:296
+msgid "Small screens"
+msgstr ""
+
+#: includes/settings-form.php:301
+msgid "Do not show snowfall on screens narrower than 768px"
+msgstr ""
+
+#: includes/settings-form.php:307
 #: includes/settings-seasonal.php:195
 msgid "Accessibility"
 msgstr ""
 
-#: includes/settings-form.php:279
+#: includes/settings-form.php:312
 #: includes/settings-seasonal.php:200
 msgid "Respect the visitor's \"reduce motion\" system setting"
 msgstr ""
 
-#: includes/settings-form.php:293
+#: includes/settings-form.php:326
 msgid "Animated particle backgrounds powered by tsParticles. Add the \"FX Ambient Section\" block in the Block Editor, or build a shortcode below and paste it inside any section. Nothing here is saved — it is a live generator."
 msgstr ""
 
-#: includes/settings-form.php:297
+#: includes/settings-form.php:330
 #: assets/js/blocks-editor.js:231
 msgid "Preset"
 msgstr ""
 
-#: includes/settings-form.php:307
+#: includes/settings-form.php:340
 msgid "Color"
 msgstr ""
 
-#: includes/settings-form.php:310
+#: includes/settings-form.php:343
 #: assets/js/blocks-editor.js:243
 msgid "Leave empty to use the preset color."
 msgstr ""
 
-#: includes/settings-form.php:314
+#: includes/settings-form.php:347
 #: includes/settings-seasonal.php:216
 msgid "Amount"
 msgstr ""
 
-#: includes/settings-form.php:318
+#: includes/settings-form.php:351
 #: includes/settings-seasonal.php:235
 msgid "Speed"
 msgstr ""
 
-#: includes/settings-form.php:322
+#: includes/settings-form.php:355
 #: assets/js/blocks-editor.js:251
 msgid "Emojis"
 msgstr ""
 
-#: includes/settings-form.php:325
+#: includes/settings-form.php:358
 msgid "Only for the \"Floating emoji\" preset."
 msgstr ""
 
-#: includes/settings-form.php:329
+#: includes/settings-form.php:362
 #: assets/js/blocks-editor.js:292
 msgid "On hover"
 msgstr ""
 
-#: includes/settings-form.php:332
-#: includes/settings-form.php:344
+#: includes/settings-form.php:365
+#: includes/settings-form.php:377
 #: assets/js/blocks-editor.js:295
 #: assets/js/blocks-editor.js:310
 msgid "Preset default"
 msgstr ""
 
-#: includes/settings-form.php:333
-#: includes/settings-form.php:345
+#: includes/settings-form.php:366
+#: includes/settings-form.php:378
 #: assets/js/blocks-editor.js:296
 #: assets/js/blocks-editor.js:311
 msgid "Nothing"
 msgstr ""
 
-#: includes/settings-form.php:334
+#: includes/settings-form.php:367
 #: assets/js/blocks-editor.js:297
 msgid "Repulse"
 msgstr ""
 
-#: includes/settings-form.php:335
+#: includes/settings-form.php:368
 #: assets/js/blocks-editor.js:298
 msgid "Grab"
 msgstr ""
 
-#: includes/settings-form.php:336
+#: includes/settings-form.php:369
 #: assets/js/blocks-editor.js:299
 msgid "Bubble"
 msgstr ""
 
-#: includes/settings-form.php:341
+#: includes/settings-form.php:374
 #: assets/js/blocks-editor.js:307
 msgid "On click"
 msgstr ""
 
-#: includes/settings-form.php:346
+#: includes/settings-form.php:379
 #: assets/js/blocks-editor.js:312
 msgid "Add particles"
 msgstr ""
 
-#: includes/settings-form.php:347
+#: includes/settings-form.php:380
 #: assets/js/blocks-editor.js:313
 msgid "Remove particles"
 msgstr ""
 
-#: includes/settings-form.php:352
+#: includes/settings-form.php:385
 msgid "Live preview"
 msgstr ""
 
-#: includes/settings-form.php:358
+#: includes/settings-form.php:391
 msgid "Shortcode"
 msgstr ""
 
-#: includes/settings-form.php:361
+#: includes/settings-form.php:394
 msgid "Copy"
 msgstr ""
 
-#: includes/settings-form.php:362
+#: includes/settings-form.php:395
 msgid "The parent element should have position: relative so the particles stay inside it."
 msgstr ""
 
-#: includes/settings-form.php:369
+#: includes/settings-form.php:402
 msgid "Grayscale (Turn off full page color)"
 msgstr ""
 
-#: includes/settings-form.php:371
+#: includes/settings-form.php:404
 msgid "Turn the whole site black and white, for solemn occasions or national mourning."
 msgstr ""
 
-#: includes/settings-form.php:381
+#: includes/settings-form.php:414
 msgid "Enable grayscale effect on site"
 msgstr ""
 
-#: includes/settings-form.php:391
+#: includes/settings-form.php:424
 msgid "Always on"
 msgstr ""
 
-#: includes/settings-form.php:401
+#: includes/settings-form.php:434
 msgid "Paused (keep settings, do not apply)"
 msgstr ""
 
-#: includes/settings-form.php:424
+#: includes/settings-form.php:457
 msgid "When enabled, the engine will parse simple inline markup in outputs."
 msgstr ""
 
-#: includes/settings-form.php:434
+#: includes/settings-form.php:467
 msgid "Apply inline formatting in text"
 msgstr ""
 
-#: includes/settings-form.php:437
+#: includes/settings-form.php:470
 msgid "Supported: *bold*, `italic`, ~strike~, ^mark^, _highlight_, ||spoiler||"
 msgstr ""
 
-#: includes/settings-form.php:440
+#: includes/settings-form.php:473
 msgid "Spoilers are blurred until clicked. Short spoilers hide the \"Tap to reveal\" label automatically."
 msgstr ""
 
@@ -665,7 +701,7 @@ msgstr ""
 msgid "Floating emoji"
 msgstr ""
 
-#: init-fx-engine.php:61
+#: init-fx-engine.php:60
 msgid "Settings"
 msgstr ""
 

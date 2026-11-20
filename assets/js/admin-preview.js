@@ -68,7 +68,9 @@
 					speed: valueOf( box, '.fx-snowfall-speed' ),
 					opacity: valueOf( box, '.fx-snowfall-opacity' ),
 					style: valueOf( box, '.fx-snowfall-style' ),
+					color: valueOf( box, '.fx-snowfall-color' ),
 					wind: valueOf( box, '.fx-snowfall-wind' ),
+					fps: valueOf( box, '.fx-snowfall-fps' ),
 				}, 8000 );
 			} );
 		}

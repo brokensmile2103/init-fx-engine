@@ -4,7 +4,7 @@ Tags: animation, effect, confetti, snow, particles
 Requires at least: 6.9
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Bring your WordPress site to life with visual effects, particle backgrounds and 
 
 > 🎉 Celebrate milestones with fireworks or cannon blasts  
 > 💬 Let users experience emoji reactions and heart rain in comments  
-> ❄️ Schedule snowfall automatically or set your own custom dates  
+> ❄️ Classic snowfall with random depth, on an automatic or custom schedule  
 > 🎄 Hand-drawn seasonal scenes: Christmas, New Year, Lunar New Year (Tết), Valentine, Mid-Autumn, Halloween — with decorations  
 > ✨ Particle backgrounds (stars, snow, bubbles, fireflies, network, emoji) powered by tsParticles  
 > 🎆 Real fireworks show for New Year's Eve and celebrations  
@@ -30,16 +30,6 @@ This plugin is part of the [Init Plugin Suite](https://en.inithtml.com/init-plug
 
 GitHub repository: [https://github.com/brokensmile2103/init-fx-engine](https://github.com/brokensmile2103/init-fx-engine)
 
-**What's New in v2.0.2:**
-- **Smart loading**: canvas-confetti and the FX engine are only loaded when keyword effects are configured, or on pages that contain an FX shortcode / block. Inline formatting now lives in its own tiny file. A page that uses nothing loads nothing
-- **New seasonal scenes, drawn by hand on canvas**: crystal snowflakes and twinkling string lights for Christmas, peach and apricot blossoms, tumbling lucky-money envelopes and swinging lanterns for Tết, glowing lanterns under a full moon for Mid-Autumn, flapping bats, floating ghosts and spider webs for Halloween, golden glitter and 3D confetti for New Year, glossy hearts for Valentine
-- **Decorations** and **interactive bursts** for seasonal scenes (themed particles burst wherever visitors click)
-- **Faster Snowfall**: a new lightweight canvas renderer replaces particles.js, with depth, wind gusts, optional crystal snowflakes, a Preview button and "reduce motion" support
-- **Particle backgrounds powered by tsParticles**: 6 presets for `[initfxen-fx-ambient]`, a new **FX Ambient Section** block with live preview in the editor, and a shortcode generator in the settings page
-- **New effect**: Blossom Rain (Tết)
-- **Nicer spoilers**: blurred background instead of the gray box, and short spoilers hide the "Tap to reveal" label automatically
-- **Many fixes**: see the changelog
-
 **Highlights:**
 - Native Block Editor blocks: FX Trigger and FX Ambient Section — with live preview in the editor
 - Interactive visual effects: Firework, Emoji Rain, Heart Rain, Cannon Blast, Starlight, Celebration Burst, Halloween Burst, Lucky Money, Blossom Rain, Fireworks Show, Snow Burst, Lantern Rise
@@ -48,7 +38,7 @@ GitHub repository: [https://github.com/brokensmile2103/init-fx-engine](https://g
 - Preloader (loading screen) with 6 styles: Dot Dot Dot, Bar, Logo, Flower, Spinner, Emoji
 - Supports gradient or solid background for preloader
 - Auto-fetch favicon for logo-based animation
-- Snowfall effect with date scheduler (auto/custom)
+- Snowfall with date scheduler (auto/custom), 4 snow styles, custom color, wind, battery saver mode and small-screen option
 - Grayscale mode (manual or scheduled)
 - Keywords to trigger effects inside comments or post content
 - Real-time preview of effects in settings page
@@ -79,12 +69,27 @@ FX Trigger shares the exact same rendering code as its shortcode, so switching b
 
 Note: this plugin does not include Abilities API support. It has no data to read or write — everything it does is a purely visual, client-side effect — so there is nothing meaningful for an AI agent or automation tool to query here.
 
+== Snowfall ==
+
+Go to **Settings → Init FX Engine → Snowfall Effect**. Snowfall runs on its own lightweight canvas renderer (no library):
+
+- **Snow style**: Classic round (default — solid round flakes with random size and opacity for depth, just like earlier versions), Soft glow, Crystal snowflakes, or Classic + crystal
+- **Snow color**: white by default; a light blue or gray keeps snow visible on light backgrounds
+- **Schedule**: automatic (Dec 20 – Dec 31) or custom dates, optionally homepage only
+- **Amount, size, fall speed, opacity**
+- **Wind**: gentle swaying and gusts; when off, snow drifts down at slightly random angles like before
+- **Performance**: Smooth (60 fps) or Battery saver (30 fps)
+- **Small screens**: optionally hide snowfall below 768px
+- The **Preview** button plays the snow over a night-sky backdrop right in the settings page
+
+Performance: pre-rendered sprites, frame-rate independent motion, fewer flakes on small screens, no canvas reallocation when the mobile address bar shows or hides, stops when the tab is hidden, starts after the page has loaded and respects "reduce motion".
+
 == Seasonal Effects ==
 
 Go to **Settings → Init FX Engine → Seasonal Effects** and tick **Enable seasonal effects on site**.
 
 - **Theme**: pick a holiday, or leave it on **Auto** to follow the holiday calendar
-- **Built-in holiday calendar**: Halloween (Oct 24–31), Christmas (Dec 20–26), New Year (Dec 30 – Jan 2), Tết (one week before Lunar New Year's Day – the 7th day of the new year), Valentine (Feb 10–14), Mid-Autumn (one week before the 15th day of the 8th lunar month)
+- **Built-in holiday calendar**: Halloween (Oct 24–31), Christmas (Dec 20–26), New Year (Dec 30 – Jan 2), Tết (one week before Lunar New Year's Day – the 7th day of the new year), Valentine (Feb 10–14), Mid-Autumn (one week before the 15th day of the 8th lunar month – the 16th)
 - **Custom schedule** or **Always on** (handy for testing on localhost)
 - **Hand-drawn scenes**: crystal snowflakes, blossoms, petals, lucky-money envelopes, lanterns, hearts, bats, ghosts, glitter and confetti — drawn once into sprites, then animated on a single canvas
 - **Decorations**: Christmas and New Year string lights, Tết lanterns, Mid-Autumn full moon, Halloween spider webs with a dangling spider (placed below the admin bar when you are logged in)
@@ -158,17 +163,26 @@ Yes. You can format text using simple markers:
 
 1. Settings page — section navigation and Preloader (loading screen) settings.
 2. Keyword Effects — keywords for each effect, with a Preview button per effect.
-3. Snowfall Effect — schedule, homepage-only, snow style, amount, size, speed, opacity, wind and the Preview button.
+3. Snowfall Effect — schedule, homepage-only, snow style, snow color, amount, size, speed, opacity, wind, performance mode, small screens and the Preview button.
 4. Seasonal Effects — theme, schedule, holiday calendar with "Today visitors will see", greeting, decorations, interactive bursts, accessibility and particle settings.
 5. Particle Backgrounds — shortcode generator with a live tsParticles preview.
 6. Grayscale — enable, always on / custom schedule / paused, custom dates.
 7. Inline Formatting — enable inline markup and blurred spoilers.
-8. Snowfall effect on a live site ("Mixed" style: soft dots and crystal snowflakes).
+8. Classic snowfall on a live site: round flakes with random size and opacity for depth.
 9. Christmas seasonal scene with string lights, crystal snowflakes and gifts.
 10. FX Ambient Section block with a live particle background in the Block Editor.
 11. Lunar New Year (Tết) scene: swinging lanterns, peach and apricot blossoms, lucky-money envelopes, and blurred spoilers.
 
 == Changelog ==
+
+= 2.0.3 – November 20, 2026 =
+- **Snowfall: Classic round style is back as the default** — solid round flakes with random size and random opacity for depth, drifting down at slightly random angles, matching the look of the particles.js snowfall used before 2.0.2. Existing "dots" settings automatically use the classic look
+- **New Snowfall options**: Snow color, "Soft glow" style (the 2.0.2 dots), "Classic + crystal snowflakes", Performance (Smooth 60 fps / Battery saver 30 fps) and "Do not show on screens narrower than 768px"
+- **Wind** is now optional and off by default for new installs (gentle swaying and gusts when enabled)
+- **Performance**: the snowfall canvas is no longer reallocated when the mobile address bar shows or hides while scrolling; sprites are built once per color
+- **Fix**: the Snowfall Preview button looked like it did nothing because white snow was invisible on the light admin background — the preview now plays over a night-sky backdrop
+- **Readme**: new Snowfall section; "What's New" blocks removed from the description (see the changelog)
+- **Internationalization**: new strings added to the POT file and Vietnamese translation
 
 = 2.0.2 – November 20, 2026 =
 - **New: Smart loading** — canvas-confetti and `fx-engine.js` are no longer enqueued on every page. They load only when keyword effects are configured, when the page renders an `[initfxen-fx]` shortcode or FX Trigger block (enqueued at render time), or when the seasonal greeting effect needs them. New filter `init_plugin_suite_fx_engine_load_engine` to force loading
@@ -226,7 +240,7 @@ Yes. You can format text using simple markers:
 - **New: Block Editor (Gutenberg) support**: a native **FX Trigger** block (equivalent to `[initfxen-fx]`), grouped under its own **Init FX Engine** block category (instead of the generic "Widgets" category). Registered via `block.json` (with a PHP `render.php` file wired through the `"render"` field, WP 6.1+) that calls the exact same shortcode function as its shortcode counterpart — no duplicated display logic, output always matches. The editor integration is a single, no-build-step vanilla JavaScript file using `wp.serverSideRender` for a live preview directly in the editor. The `[initfxen-fx-ambient]` shortcode does not get a block equivalent in this release — its rendering behavior wasn't stable enough yet; the shortcode itself is unaffected
 - **Changed**: `Requires at least` raised from 5.5 to 6.9, for consistency with the rest of the Init Plugin Suite's 2.0.0 releases
 - **Note**: this release does not add Abilities API support. This plugin has no data to read or write — everything it does is a purely visual, client-side effect — so there is nothing meaningful for an AI agent to query
-- **Tested up to: 7.2**
+- **Tested up to: 7.1**
 
 = 1.6 – December 17, 2025 =
 - **Enhancement**: Added advanced Snowfall configuration options — control snow amount, size, fall speed, and opacity

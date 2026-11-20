@@ -1,13 +1,19 @@
 /**
  * Init FX Engine — Snowfall.
  *
- * Từ 2.0.2 không còn dùng particles.js (thư viện ngừng phát triển từ 2016, ~23KB):
- * - 1 canvas, sprite bông tuyết dựng sẵn → mỗi khung hình chỉ drawImage.
- * - Chuyển động theo thời gian thực (delta time) → mượt như nhau ở 60Hz/120Hz/144Hz.
- * - Hạt to rơi nhanh hơn (chiều sâu), đung đưa nhẹ, gió đổi hướng chậm rãi.
- * - Số hạt tự co giãn theo diện tích màn hình (mobile nhẹ hơn desktop).
- * - Dừng hẳn khi tab bị ẩn, chỉ khởi động sau khi trang tải xong (không ảnh hưởng LCP).
- * - Tôn trọng "prefers-reduced-motion" (có thể tắt trong cài đặt).
+ * Renderer canvas riêng (không thư viện), thay cho particles.js từ 2.0.2. Bản 2.0.3:
+ * - Kiểu "Classic" (mặc định): hạt tròn đặc, kích thước + độ mờ ngẫu nhiên tạo chiều sâu,
+ *   rơi chéo nhẹ ngẫu nhiên — đúng cảm giác của Snowfall các bản cũ (particles.js).
+ * - Thêm kiểu Soft glow (chấm tuyết phát sáng của 2.0.2), Crystal, Mixed; màu tuyết tùy chỉnh.
+ * - Gió nhẹ (tùy chọn), chế độ tiết kiệm pin 30fps, tắt trên màn hình nhỏ (tùy chọn).
+ *
+ * Hiệu năng:
+ * - Sprite dựng sẵn 1 lần → mỗi khung hình chỉ drawImage (hạt tròn không cần xoay/transform riêng).
+ * - Delta time → tốc độ như nhau ở 60/120/144Hz; giới hạn DPR = 2.
+ * - Số hạt co giãn theo diện tích màn hình.
+ * - Mobile: thanh địa chỉ co/giãn không làm cấp phát lại canvas (chỉ cấp phát khi đổi chiều rộng
+ *   hoặc chiều cao tăng vượt vùng đã có).
+ * - Dừng khi tab ẩn, khởi động khi trình duyệt rảnh sau "load", tôn trọng prefers-reduced-motion.
  *
  * API: window.initFxSnowfall.start( config ) / stop() / preview( config, ms ) / isRunning()
  */
@@ -22,19 +28,22 @@
 	var MAX_DT = 0.05;
 	var REF_AREA = 1440 * 900;
 	var SPRITE_PX = 64;
+	var STYLES = [ 'dots', 'soft', 'flakes', 'mixed' ];
 
 	var state = {
 		cfg: null,
 		canvas: null,
 		ctx: null,
-		dot: null,
-		flakes: [],
+		sprites: null,
 		particles: [],
 		width: 0,
 		height: 0,
+		allocW: 0,
+		allocH: 0,
 		dpr: 1,
 		raf: 0,
 		last: 0,
+		frameGap: 0,
 		running: false,
 		resizeQueued: false,
 		wind: 0,
@@ -60,6 +69,10 @@
 		return !! ( window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches );
 	}
 
+	function isSmallScreen() {
+		return !! ( window.matchMedia && window.matchMedia( '(max-width: 767px)' ).matches );
+	}
+
 	function normalize( cfg ) {
 		cfg = cfg || {};
 		return {
@@ -67,14 +80,17 @@
 			size: num( cfg.size, 1, 10, 4 ),
 			speed: num( cfg.speed, 0.3, 5, 1.2 ),
 			opacity: num( cfg.opacity, 0.1, 1, 0.6 ),
-			style: [ 'dots', 'flakes', 'mixed' ].indexOf( cfg.style ) !== -1 ? cfg.style : 'dots',
-			wind: cfg.wind !== false,
+			style: STYLES.indexOf( cfg.style ) !== -1 ? cfg.style : 'dots',
+			color: /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test( cfg.color || '' ) ? cfg.color : '#ffffff',
+			wind: !! cfg.wind,
+			fps: Number( cfg.fps ) === 30 ? 30 : 60,
+			hideMobile: !! cfg.hideMobile,
 			reducedMotion: cfg.reducedMotion !== false,
 		};
 	}
 
 	// ---------------------------------------------------------------------
-	// Sprites (vẽ 1 lần)
+	// Sprites (vẽ 1 lần cho mỗi lần start)
 	// ---------------------------------------------------------------------
 	function makeCanvas( size ) {
 		var c = document.createElement( 'canvas' );
@@ -83,18 +99,33 @@
 		return c;
 	}
 
-	// Chấm tuyết mềm: lõi trắng + viền mờ dần + bóng xanh xám rất nhẹ (vẫn thấy trên nền trắng).
-	function buildDot() {
+	// Classic: hình tròn đặc, mép khử răng cưa — giống particles.js.
+	function buildRound( color ) {
+		var c = makeCanvas( SPRITE_PX );
+		var g = c.getContext( '2d' );
+		g.fillStyle = color;
+		g.beginPath();
+		g.arc( SPRITE_PX / 2, SPRITE_PX / 2, SPRITE_PX / 2 - 0.5, 0, Math.PI * 2 );
+		g.fill();
+		return c;
+	}
+
+	// Soft glow: lõi sáng + viền mờ dần (kiểu chấm tuyết của 2.0.2).
+	function buildSoft( color ) {
 		var c = makeCanvas( SPRITE_PX );
 		var g = c.getContext( '2d' );
 		var r = SPRITE_PX / 2;
 
-		var halo = g.createRadialGradient( r, r, 0, r, r, r );
-		halo.addColorStop( 0, 'rgba(255,255,255,1)' );
-		halo.addColorStop( 0.45, 'rgba(255,255,255,0.95)' );
-		halo.addColorStop( 0.7, 'rgba(225,238,255,0.45)' );
-		halo.addColorStop( 1, 'rgba(200,220,245,0)' );
+		g.fillStyle = color;
+		g.beginPath();
+		g.arc( r, r, r * 0.5, 0, Math.PI * 2 );
+		g.fill();
 
+		g.globalCompositeOperation = 'source-over';
+		var halo = g.createRadialGradient( r, r, r * 0.45, r, r, r );
+		halo.addColorStop( 0, color );
+		halo.addColorStop( 1, 'rgba(255,255,255,0)' );
+		g.globalAlpha = 0.55;
 		g.fillStyle = halo;
 		g.beginPath();
 		g.arc( r, r, r, 0, Math.PI * 2 );
@@ -104,7 +135,7 @@
 	}
 
 	// Bông tuyết pha lê 6 cánh (3 biến thể).
-	function buildFlake( variant ) {
+	function buildFlake( variant, color ) {
 		var c = makeCanvas( SPRITE_PX );
 		var g = c.getContext( '2d' );
 		var r = SPRITE_PX / 2;
@@ -112,7 +143,7 @@
 		var i;
 
 		g.translate( r, r );
-		g.strokeStyle = '#ffffff';
+		g.strokeStyle = color;
 		g.lineCap = 'round';
 		g.shadowColor = 'rgba(120,160,210,0.55)';
 		g.shadowBlur = 4;
@@ -152,7 +183,7 @@
 			g.restore();
 		}
 
-		g.fillStyle = '#ffffff';
+		g.fillStyle = color;
 		g.beginPath();
 		g.arc( 0, 0, variant === 1 ? 3.5 : 2.5, 0, Math.PI * 2 );
 		g.fill();
@@ -161,10 +192,12 @@
 	}
 
 	function buildSprites() {
-		if ( ! state.dot ) {
-			state.dot = buildDot();
-			state.flakes = [ buildFlake( 0 ), buildFlake( 1 ), buildFlake( 2 ) ];
-		}
+		var color = state.cfg.color;
+		state.sprites = {
+			round: buildRound( color ),
+			soft: buildSoft( color ),
+			flakes: [ buildFlake( 0, color ), buildFlake( 1, color ), buildFlake( 2, color ) ],
+		};
 	}
 
 	// ---------------------------------------------------------------------
@@ -177,21 +210,27 @@
 
 	function spawn( p, initial ) {
 		var cfg = state.cfg;
-		var useFlake = cfg.style === 'flakes' || ( cfg.style === 'mixed' && Math.random() < 0.35 );
-		var depth = Math.pow( Math.random(), 1.4 ); // Nhiều hạt nhỏ ở xa, ít hạt to ở gần.
+		var s = state.sprites;
+		var useFlake = cfg.style === 'flakes' || ( cfg.style === 'mixed' && Math.random() < 0.3 );
+		var depth = Math.random();
 
-		p.flake = useFlake ? state.flakes[ ( Math.random() * 3 ) | 0 ] : null;
-		p.r = cfg.size * ( 0.35 + depth * 0.65 ) * ( useFlake ? 2.4 : 1 );
+		p.flake = useFlake ? s.flakes[ ( Math.random() * 3 ) | 0 ] : null;
+		p.img = p.flake || ( cfg.style === 'soft' ? s.soft : s.round );
+
+		// Giống particles.js: bán kính = ngẫu nhiên × size, độ mờ = ngẫu nhiên × opacity (độc lập)
+		// → hạt to/nhỏ, đậm/nhạt lẫn lộn tạo cảm giác chiều sâu. Hạt to rơi nhanh hơn một chút.
+		p.r = cfg.size * Math.max( 0.15, depth ) * ( useFlake ? 2.2 : 1 );
+		p.alpha = cfg.opacity * Math.max( 0.06, Math.random() );
+		p.vy = cfg.speed * 30 * rand( 0.5, 1.5 ) * ( 0.8 + depth * 0.4 );
+		p.vx = ( Math.random() - 0.5 ) * cfg.speed * 30; // Rơi chéo nhẹ ngẫu nhiên như bản cũ.
 		p.depth = depth;
-		p.alpha = cfg.opacity * ( 0.45 + depth * 0.55 );
-		p.vy = cfg.speed * rand( 18, 30 ) * ( 0.55 + depth * 0.9 );
-		p.swing = rand( 6, 22 ) * ( 0.5 + depth );
-		p.swingSpeed = rand( 0.4, 1.3 );
+		p.swing = cfg.wind ? rand( 4, 14 ) * ( 0.5 + depth ) : 0;
+		p.swingSpeed = rand( 0.4, 1.2 );
 		p.phase = rand( 0, Math.PI * 2 );
 		p.rot = rand( 0, Math.PI * 2 );
 		p.spin = rand( -0.8, 0.8 );
 		p.x = Math.random() * state.width;
-		p.y = initial ? Math.random() * state.height : -p.r * 2 - Math.random() * 40;
+		p.y = initial ? Math.random() * state.height : -p.r * 2 - Math.random() * 30;
 
 		return p;
 	}
@@ -210,13 +249,12 @@
 
 	function updateWind( dt ) {
 		if ( ! state.cfg.wind ) {
-			state.wind = 0;
 			return;
 		}
 		state.windTimer -= dt;
 		if ( state.windTimer <= 0 ) {
 			state.windTimer = rand( 4, 9 );
-			state.windTarget = rand( -1, 1 ) * 22 * state.cfg.speed;
+			state.windTarget = rand( -1, 1 ) * 20 * state.cfg.speed;
 		}
 		// Tiến dần về hướng gió mới → đổi hướng rất êm.
 		state.wind += ( state.windTarget - state.wind ) * Math.min( 1, dt * 0.35 );
@@ -227,13 +265,20 @@
 		var w = state.width;
 		var h = state.height;
 		var wind = state.wind;
-		var i, p;
+		var i, p, dx;
 
 		for ( i = 0; i < list.length; i++ ) {
 			p = list[ i ];
-			p.phase += p.swingSpeed * dt;
+			dx = p.vx;
+
+			if ( p.swing ) {
+				p.phase += p.swingSpeed * dt;
+				dx += Math.sin( p.phase ) * p.swing + wind * ( 0.4 + p.depth );
+			}
+
 			p.y += p.vy * dt;
-			p.x += ( Math.sin( p.phase ) * p.swing + wind * ( 0.4 + p.depth ) ) * dt;
+			p.x += dx * dt;
+
 			if ( p.flake ) {
 				p.rot += p.spin * dt;
 			}
@@ -252,13 +297,12 @@
 		var ctx = state.ctx;
 		var dpr = state.dpr;
 		var list = state.particles;
-		var dot = state.dot;
 		var i, p, d, cos, sin, s;
 
 		ctx.setTransform( 1, 0, 0, 1, 0, 0 );
 		ctx.clearRect( 0, 0, state.canvas.width, state.canvas.height );
 
-		// Lượt 1: chấm tuyết — không xoay, chỉ 1 transform cho cả lượt.
+		// Lượt 1: hạt tròn — 1 transform cho cả lượt, không xoay.
 		ctx.setTransform( dpr, 0, 0, dpr, 0, 0 );
 		for ( i = 0; i < list.length; i++ ) {
 			p = list[ i ];
@@ -267,7 +311,7 @@
 			}
 			d = p.r * 2;
 			ctx.globalAlpha = p.alpha;
-			ctx.drawImage( dot, p.x - p.r, p.y - p.r, d, d );
+			ctx.drawImage( p.img, p.x - p.r, p.y - p.r, d, d );
 		}
 
 		// Lượt 2: bông tuyết pha lê (có xoay).
@@ -293,14 +337,19 @@
 			return;
 		}
 
-		var dt = state.last ? Math.min( MAX_DT, ( now - state.last ) / 1000 ) : 0;
+		state.raf = window.requestAnimationFrame( frame );
+
+		// Chế độ tiết kiệm pin: bỏ qua khung hình để giữ ~30fps.
+		if ( state.frameGap && state.last && now - state.last < state.frameGap ) {
+			return;
+		}
+
+		var dt = state.last ? Math.min( MAX_DT * 2, ( now - state.last ) / 1000 ) : 0;
 		state.last = now;
 
 		updateWind( dt );
 		update( dt );
 		draw();
-
-		state.raf = window.requestAnimationFrame( frame );
 	}
 
 	// ---------------------------------------------------------------------
@@ -312,11 +361,23 @@
 			return;
 		}
 
-		state.dpr = Math.min( MAX_DPR, window.devicePixelRatio || 1 );
-		state.width = window.innerWidth;
-		state.height = window.innerHeight;
-		state.canvas.width = Math.round( state.width * state.dpr );
-		state.canvas.height = Math.round( state.height * state.dpr );
+		var dpr = Math.min( MAX_DPR, window.devicePixelRatio || 1 );
+		var w = window.innerWidth;
+		var h = window.innerHeight;
+
+		state.width = w;
+		state.height = h;
+
+		// Chỉ cấp phát lại canvas khi đổi chiều rộng/DPR hoặc cao hơn vùng đã có
+		// (thanh địa chỉ trên mobile co giãn khi cuộn không còn làm cấp phát lại).
+		if ( w !== state.allocW || h > state.allocH || dpr !== state.dpr ) {
+			state.allocH = w === state.allocW && dpr === state.dpr ? Math.max( h, state.allocH ) : h;
+			state.allocW = w;
+			state.dpr = dpr;
+			state.canvas.width = Math.round( w * dpr );
+			state.canvas.height = Math.round( state.allocH * dpr );
+			state.canvas.style.height = state.allocH + 'px';
+		}
 
 		syncParticleCount();
 	}
@@ -340,25 +401,6 @@
 			state.last = 0;
 			state.raf = window.requestAnimationFrame( frame );
 		}
-	}
-
-	function stop() {
-		state.running = false;
-		window.cancelAnimationFrame( state.raf );
-		window.clearTimeout( state.previewTimer );
-		window.removeEventListener( 'resize', onResize );
-		document.removeEventListener( 'visibilitychange', onVisibility );
-
-		if ( state.canvas && state.canvas.parentNode ) {
-			state.canvas.parentNode.removeChild( state.canvas );
-		}
-
-		state.canvas = null;
-		state.ctx = null;
-		state.particles = [];
-		state.last = 0;
-
-		removeBackdrop();
 	}
 
 	// Nền "bầu trời đêm" chỉ dùng khi preview: tuyết trắng gần như vô hình trên nền sáng của trang admin.
@@ -388,6 +430,27 @@
 		}, 500 );
 	}
 
+	function stop() {
+		state.running = false;
+		window.cancelAnimationFrame( state.raf );
+		window.clearTimeout( state.previewTimer );
+		window.removeEventListener( 'resize', onResize );
+		document.removeEventListener( 'visibilitychange', onVisibility );
+
+		if ( state.canvas && state.canvas.parentNode ) {
+			state.canvas.parentNode.removeChild( state.canvas );
+		}
+
+		state.canvas = null;
+		state.ctx = null;
+		state.particles = [];
+		state.last = 0;
+		state.allocW = 0;
+		state.allocH = 0;
+
+		removeBackdrop();
+	}
+
 	function start( config ) {
 		stop();
 
@@ -400,7 +463,7 @@
 		canvas.id = 'particles-snow-js'; // Giữ id cũ cho CSS tùy biến của người dùng.
 		canvas.className = 'init-fx-snowfall';
 		canvas.setAttribute( 'aria-hidden', 'true' );
-		canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;display:block;';
+		canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;pointer-events:none;display:block;';
 
 		var ctx = canvas.getContext( '2d' );
 		if ( ! ctx ) {
@@ -411,7 +474,10 @@
 		state.canvas = canvas;
 		state.ctx = ctx;
 		state.wind = 0;
+		state.windTarget = 0;
 		state.windTimer = 0;
+		state.frameGap = cfg.fps === 30 ? 1000 / 30 - 2 : 0;
+		state.dpr = 0;
 
 		buildSprites();
 		document.body.appendChild( canvas );
@@ -431,6 +497,7 @@
 	function preview( config, ms ) {
 		var cfg = normalize( config );
 		cfg.reducedMotion = false; // Preview trong admin luôn chạy.
+		cfg.hideMobile = false;
 		if ( start( cfg ) ) {
 			addBackdrop();
 		}
@@ -439,9 +506,13 @@
 
 	function boot() {
 		var cfg = window.INIT_FX && window.INIT_FX.snowfall;
-		if ( cfg ) {
-			start( cfg );
+		if ( ! cfg ) {
+			return;
 		}
+		if ( cfg.hideMobile && isSmallScreen() ) {
+			return;
+		}
+		start( cfg );
 	}
 
 	function whenIdle( fn ) {
