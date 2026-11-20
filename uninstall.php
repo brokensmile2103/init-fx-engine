@@ -1,10 +1,15 @@
 <?php
-// Exit if accessed directly or not uninstalling
+/**
+ * Uninstall: remove all plugin options.
+ *
+ * @package Init_FX_Engine
+ */
+
+// Exit if accessed directly or not uninstalling.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-    exit;
+	exit;
 }
 
-// Delete plugin options
 delete_option( 'init_plugin_suite_fx_engine_keywords' );
 delete_option( 'init_plugin_suite_fx_engine_snowfall' );
 delete_option( 'init_plugin_suite_fx_engine_grayscale' );

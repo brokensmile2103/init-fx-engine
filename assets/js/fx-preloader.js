@@ -1,4 +1,4 @@
-// fx-preloader.js - Minimal fix - chỉ sửa z-index issue + session_once
+// fx-preloader.js - Preloader animation + session_once.
 (function initPreloader() {
     // Không cần wait config nữa vì đã pass sớm từ PHP
     const config = window.INIT_FX?.preloader;
@@ -72,7 +72,10 @@
         }
     };
 
-    const color = isDark(bg) ? '#ffffff' : '#000000';
+    // Nền gradient ("#111, #333") → xét từng màu, đa số tối thì dùng chấm trắng (trước đây luôn ra chấm đen).
+    const bgColors = bg.indexOf('(') === -1 ? bg.split(',').map(c => c.trim()).filter(Boolean) : [bg];
+    const darkCount = bgColors.filter(c => isDark(c)).length;
+    const color = darkCount * 2 >= bgColors.length && darkCount > 0 ? '#ffffff' : '#000000';
 
     // Style definitions cho từng loại preloader - ORIGINAL STYLES
     const styleDefinitions = {

@@ -1,0 +1,86 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "init-fx-engine/fx-ambient",
+	"version": "2.0.2",
+	"title": "FX Ambient Section",
+	"category": "init-fx-engine",
+	"icon": "art",
+	"description": "A section with an animated particle background — twinkling stars, gentle snow, rising bubbles, fireflies, network links or floating emoji. Put any blocks inside.",
+	"keywords": [ "particles", "background", "ambient", "snow", "stars", "tsparticles" ],
+	"textdomain": "init-fx-engine",
+	"attributes": {
+		"preset": {
+			"type": "string",
+			"default": "stars"
+		},
+		"color": {
+			"type": "string",
+			"default": ""
+		},
+		"amount": {
+			"type": "number",
+			"default": 0
+		},
+		"speed": {
+			"type": "number",
+			"default": 0
+		},
+		"emoji": {
+			"type": "string",
+			"default": ""
+		},
+		"hover": {
+			"type": "string",
+			"default": ""
+		},
+		"click": {
+			"type": "string",
+			"default": ""
+		},
+		"lines": {
+			"type": "boolean",
+			"default": true
+		},
+		"style": {
+			"type": "object",
+			"default": {
+				"color": {
+					"gradient": "linear-gradient(135deg,rgb(15,23,42) 0%,rgb(30,58,95) 100%)",
+					"text": "#ffffff"
+				},
+				"spacing": {
+					"padding": {
+						"top": "4rem",
+						"bottom": "4rem",
+						"left": "2rem",
+						"right": "2rem"
+					}
+				},
+				"dimensions": {
+					"minHeight": "320px"
+				}
+			}
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"color": {
+			"background": true,
+			"text": true,
+			"gradients": true,
+			"link": true
+		},
+		"spacing": {
+			"padding": true,
+			"margin": true
+		},
+		"dimensions": {
+			"minHeight": true
+		}
+	},
+	"editorScript": "init-fx-engine-blocks-editor",
+	"render": "file:./render.php"
+}

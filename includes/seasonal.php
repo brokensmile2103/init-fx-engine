@@ -9,6 +9,11 @@
  *   lịch tùy chỉnh, hoặc luôn bật).
  * - Enqueue 1 file JS nhỏ (fx-seasonal.js) kèm payload tối thiểu cho frontend.
  *
+ * Từ 2.0.2, fx-seasonal.js tự vẽ cảnh lễ hội (bông tuyết pha lê, cánh đào/mai,
+ * đèn lồng phát sáng, dơi vỗ cánh, ma, trái tim, kim tuyến...) + đồ trang trí
+ * (dây đèn Giáng sinh, đèn lồng Tết, trăng rằm, mạng nhện). Danh sách emoji của
+ * theme vẫn được dùng cho theme thêm qua filter và khi người dùng nhập emoji riêng.
+ *
  * @package Init_FX_Engine
  */
 
@@ -34,6 +39,8 @@ function init_plugin_suite_fx_engine_seasonal_defaults() {
 		'opacity'        => 0.9,
 		'greeting'       => true,
 		'reduced_motion' => true,
+		'decor'          => true,
+		'interactive'    => false,
 	);
 }
 
@@ -480,6 +487,10 @@ function init_plugin_suite_fx_engine_seasonal_payload( $theme, $settings ) {
 		'speed'         => max( 0.3, min( 3, (float) $settings['speed'] ) ),
 		'opacity'       => max( 0.2, min( 1, (float) $settings['opacity'] ) ),
 		'reducedMotion' => ! empty( $settings['reduced_motion'] ),
+		'decor'         => ! empty( $settings['decor'] ),
+		'interactive'   => ! empty( $settings['interactive'] ),
+		// Người dùng tự nhập emoji → chỉ dùng emoji (giữ đúng lựa chọn của họ).
+		'customItems'   => ! empty( $custom ),
 	);
 
 	/**
@@ -534,11 +545,18 @@ function init_plugin_suite_fx_engine_enqueue_seasonal() {
 
 	$payload              = init_plugin_suite_fx_engine_seasonal_payload( $theme, $settings );
 	$payload['autostart'] = true;
+	$deps                 = array();
+
+	// Lời chào (pháo hoa, lì xì...) cần FX engine; không bật lời chào thì không tải engine.
+	if ( '' !== $payload['greeting'] ) {
+		init_plugin_suite_fx_engine_enqueue_engine();
+		$deps[] = INIT_PLUGIN_SUITE_FX_ENGINE_HANDLE_ENGINE;
+	}
 
 	wp_enqueue_script(
 		'init-plugin-suite-fx-seasonal',
 		INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-seasonal.js',
-		array( 'init-plugin-suite-fx-engine' ),
+		$deps,
 		INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
 		array(
 			'in_footer' => true,
@@ -592,5 +610,7 @@ function init_plugin_suite_fx_engine_sanitize_seasonal( $input ) {
 		'opacity'        => max( 0.2, min( 1, floatval( $input['opacity'] ?? $defaults['opacity'] ) ) ),
 		'greeting'       => ! empty( $input['greeting'] ),
 		'reduced_motion' => ! empty( $input['reduced_motion'] ),
+		'decor'          => ! empty( $input['decor'] ),
+		'interactive'    => ! empty( $input['interactive'] ),
 	);
 }

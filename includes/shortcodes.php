@@ -1,135 +1,269 @@
 <?php
-defined('ABSPATH') || exit;
+/**
+ * Shortcodes:
+ * - [initfxen-fx]         (compat: [init-fx])         Link/nút phát hiệu ứng khi click/hover/xuất hiện.
+ * - [initfxen-fx-ambient] (compat: [init-fx-ambient]) Nền hạt chuyển động (tsParticles).
+ *
+ * Cả hai tự enqueue script cần thiết ngay lúc render → trang nào không dùng thì không tải gì.
+ *
+ * @package Init_FX_Engine
+ */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
- * FX SHORTCODE (link/button… có effect khi click/hover)
- * - Slug mới:  initfxen-fx
- * - Slug cũ:  init-fx (compat)
+ * HTML tags allowed for the [initfxen-fx] trigger element.
+ *
+ * Danh sách trắng — tránh shortcode bị lợi dụng để in ra thẻ <script>, <iframe>... (XSS từ tài khoản Contributor).
+ *
+ * @return array
  */
-function initfxen_render_fx_shortcode( $atts, $content = null, $shortcode_tag = 'initfxen-fx' ) {
-    $atts = shortcode_atts([
-        'text'   => '',
-        'fx'     => '',
-        'emoji'  => '',
-        'shoot'  => 'click',
-        'tag'    => 'a',
-    ], $atts, $shortcode_tag);
-
-    if ( empty($atts['text']) || empty($atts['fx']) ) {
-        return '';
-    }
-
-    $tag   = tag_escape( $atts['tag'] );
-    $text  = esc_html( $atts['text'] );
-    $attrs = sprintf(
-        'class="fx-shortcode" data-effect="%s" data-trigger="%s"%s',
-        esc_attr( $atts['fx'] ),
-        esc_attr( $atts['shoot'] ),
-        $atts['emoji'] ? ' data-emoji="' . esc_attr( $atts['emoji'] ) . '"' : ''
-    );
-
-    return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag, $attrs, $text );
+function init_plugin_suite_fx_engine_trigger_tags() {
+	return array( 'a', 'button', 'span', 'div', 'p', 'strong', 'em', 'b', 'i', 'mark', 'small', 'h2', 'h3', 'h4', 'h5', 'h6' );
 }
-add_shortcode( 'initfxen-fx', 'initfxen_render_fx_shortcode' ); // slug mới (chính)
-add_shortcode( 'init-fx',     'initfxen_render_fx_shortcode' ); // slug cũ (compat)
 
 /**
- * AMBIENT PARTICLES SHORTCODE (hậu cảnh hạt bay)
- * - Slug mới:  initfxen-fx-ambient
- * - Slug cũ:  init-fx-ambient (compat)
- * - Không in <script> trực tiếp; dùng wp_add_inline_script.
+ * Triggers supported by the [initfxen-fx] shortcode.
+ *
+ * @return array
  */
-function initfxen_render_ambient_shortcode( $atts, $content = null, $shortcode_tag = 'initfxen-fx-ambient' ) {
-    // Đảm bảo script nền đã enqueue
-    wp_enqueue_script(
-        'init-plugin-suite-fx-particles',
-        INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/particles.min.js',
-        [],
-        INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
-        true
-    );
-
-    $atts = shortcode_atts([
-        'ambient'         => '',
-        'color'           => '#ffffff',
-        'lines'           => 'true',
-        'speed'           => '3',
-        'hover'           => 'repulse',
-        'click'           => 'push',
-        'container_style' => 'position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none; width: 100%; height: 100%;',
-        'container_class' => '',
-    ], $atts, $shortcode_tag);
-
-    if ( empty($atts['ambient']) ) {
-        return '';
-    }
-
-    $container_id = 'particles-ambient-' . wp_rand();
-
-    // Tạo container HTML (không nhúng <script> ở đây)
-    $style_attr = $atts['container_class'] ? '' : esc_attr( $atts['container_style'] );
-    $class_attr = $atts['container_class'] ? esc_attr( $atts['container_class'] ) : '';
-
-    $html  = '<div id="' . esc_attr($container_id) . '"';
-    $html .= $style_attr ? ' style="' . esc_attr($style_attr) . '"' : '';
-    $html .= $class_attr ? ' class="' . esc_attr($class_attr) . '"' : '';
-    $html .= '></div>';
-
-    // Build init config dưới dạng inline JS gắn vào handle 'init-plugin-suite-fx-particles'
-    $color   = esc_js( $atts['color'] );
-    $lines   = ($atts['lines'] === 'true') ? 'true' : 'false';
-    $speed   = floatval( $atts['speed'] );
-    $hover   = esc_js( $atts['hover'] );
-    $click   = esc_js( $atts['click'] );
-    $cid     = esc_js( $container_id );
-
-    $inline = "
-document.addEventListener('DOMContentLoaded', function () {
-    if (typeof particlesJS !== 'function') return;
-    particlesJS('{$cid}', {
-        particles: {
-            number: { value: 80, density: { enable: true, value_area: 800 } },
-            color: { value: '{$color}' },
-            shape: { type: 'circle' },
-            opacity: { value: 0.5 },
-            size: { value: 3, random: true },
-            line_linked: {
-                enable: {$lines},
-                distance: 150,
-                color: '{$color}',
-                opacity: 0.4,
-                width: 1
-            },
-            move: {
-                enable: true,
-                speed: {$speed},
-                direction: 'none',
-                out_mode: 'out'
-            }
-        },
-        interactivity: {
-            detect_on: 'canvas',
-            events: {
-                onhover: { enable: " . ($atts['hover'] !== 'none' ? 'true' : 'false') . ", mode: '{$hover}' },
-                onclick: { enable: " . ($atts['click'] !== 'none' ? 'true' : 'false') . ", mode: '{$click}' },
-                resize: true
-            },
-            modes: {
-                grab: { distance: 400, line_linked: { opacity: 1 } },
-                bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
-                repulse: { distance: 200, duration: 0.4 },
-                push: { particles_nb: 4 },
-                remove: { particles_nb: 2 }
-            }
-        },
-        retina_detect: true
-    });
-});";
-
-    // Thêm inline script gắn với handle particles (sẽ in ở footer, sau file .js)
-    wp_add_inline_script( 'init-plugin-suite-fx-particles', $inline );
-
-    return $html;
+function init_plugin_suite_fx_engine_trigger_events() {
+	return array( 'click', 'hover', 'in-view', 'immediate' );
 }
-add_shortcode( 'initfxen-fx-ambient', 'initfxen_render_ambient_shortcode' ); // slug mới (chính)
-add_shortcode( 'init-fx-ambient',     'initfxen_render_ambient_shortcode' ); // slug cũ (compat)
+
+/**
+ * FX SHORTCODE (link/button… có effect khi click/hover).
+ *
+ * @param array|string $atts          Shortcode attributes.
+ * @param string|null  $content       Enclosed content (unused).
+ * @param string       $shortcode_tag Shortcode tag.
+ * @return string
+ */
+function initfxen_render_fx_shortcode( $atts, $content = null, $shortcode_tag = 'initfxen-fx' ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed -- Signature required by add_shortcode().
+	$atts = shortcode_atts(
+		array(
+			'text'  => '',
+			'fx'    => '',
+			'emoji' => '',
+			'shoot' => 'click',
+			'tag'   => 'a',
+		),
+		$atts,
+		$shortcode_tag
+	);
+
+	$text   = trim( (string) $atts['text'] );
+	$effect = preg_replace( '/[^A-Za-z0-9_]/', '', (string) $atts['fx'] );
+
+	// "immediate" và "in-view" không cần chữ để bấm → cho phép text rỗng.
+	$shoot = strtolower( trim( (string) $atts['shoot'] ) );
+	$shoot = in_array( $shoot, init_plugin_suite_fx_engine_trigger_events(), true ) ? $shoot : 'click';
+
+	if ( '' === $effect || ( '' === $text && in_array( $shoot, array( 'click', 'hover' ), true ) ) ) {
+		return '';
+	}
+
+	$tag = strtolower( trim( (string) $atts['tag'] ) );
+	$tag = in_array( $tag, init_plugin_suite_fx_engine_trigger_tags(), true ) ? $tag : 'a';
+
+	init_plugin_suite_fx_engine_enqueue_engine();
+
+	$attributes = array(
+		'class'        => 'fx-shortcode',
+		'data-effect'  => $effect,
+		'data-trigger' => $shoot,
+	);
+
+	if ( '' !== $atts['emoji'] ) {
+		$attributes['data-emoji'] = (string) $atts['emoji'];
+	}
+
+	// Truy cập bằng bàn phím: <a> cần href, thẻ khác (không phải button) cần role + tabindex.
+	if ( 'click' === $shoot ) {
+		if ( 'a' === $tag ) {
+			$attributes['href'] = '#';
+			$attributes['role'] = 'button';
+		} elseif ( 'button' === $tag ) {
+			$attributes['type'] = 'button';
+		} else {
+			$attributes['role']     = 'button';
+			$attributes['tabindex'] = '0';
+		}
+	}
+
+	$html = '';
+	foreach ( $attributes as $name => $value ) {
+		if ( null === $value ) {
+			continue;
+		}
+		$html .= sprintf( ' %s="%s"', $name, esc_attr( $value ) );
+	}
+
+	return sprintf( '<%1$s%2$s>%3$s</%1$s>', $tag, $html, esc_html( $text ) );
+}
+add_shortcode( 'initfxen-fx', 'initfxen_render_fx_shortcode' ); // Slug mới (chính).
+add_shortcode( 'init-fx', 'initfxen_render_fx_shortcode' ); // Slug cũ (compat).
+
+// ============================================================================
+// AMBIENT PARTICLES (tsParticles)
+// ============================================================================
+
+/**
+ * Ambient particle presets.
+ *
+ * @return array Preset slug => translated label.
+ */
+function init_plugin_suite_fx_engine_ambient_presets() {
+	return array(
+		'links'     => __( 'Network links', 'init-fx-engine' ),
+		'stars'     => __( 'Twinkling stars', 'init-fx-engine' ),
+		'snow'      => __( 'Gentle snow', 'init-fx-engine' ),
+		'bubbles'   => __( 'Rising bubbles', 'init-fx-engine' ),
+		'fireflies' => __( 'Fireflies', 'init-fx-engine' ),
+		'emoji'     => __( 'Floating emoji', 'init-fx-engine' ),
+	);
+}
+
+/**
+ * Register tsParticles + fx-ambient.js (idempotent).
+ *
+ * @return void
+ */
+function init_plugin_suite_fx_engine_register_ambient() {
+	if ( wp_script_is( 'init-plugin-suite-fx-ambient', 'registered' ) ) {
+		return;
+	}
+
+	wp_register_script(
+		'init-plugin-suite-fx-tsparticles',
+		INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/tsparticles.slim.bundle.min.js',
+		array(),
+		'4.6.0',
+		array(
+			'in_footer' => true,
+			'strategy'  => 'defer',
+		)
+	);
+
+	wp_register_script(
+		'init-plugin-suite-fx-ambient',
+		INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-ambient.js',
+		array( 'init-plugin-suite-fx-tsparticles' ),
+		INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
+		array(
+			'in_footer' => true,
+			'strategy'  => 'defer',
+		)
+	);
+}
+
+/**
+ * Normalize ambient attributes (shared by the shortcode and the FX Ambient block).
+ *
+ * @param array $atts Raw attributes.
+ * @return array Clean config for fx-ambient.js.
+ */
+function init_plugin_suite_fx_engine_ambient_config( $atts ) {
+	$presets = init_plugin_suite_fx_engine_ambient_presets();
+	$preset  = sanitize_key( (string) ( $atts['ambient'] ?? '' ) );
+
+	// Các bản cũ chỉ có 1 kiểu (mạng lưới) và chấp nhận mọi giá trị khác rỗng → giữ tương thích.
+	$preset = isset( $presets[ $preset ] ) ? $preset : 'links';
+
+	$hover = sanitize_key( (string) ( $atts['hover'] ?? '' ) );
+	$click = sanitize_key( (string) ( $atts['click'] ?? '' ) );
+	$lines = strtolower( trim( (string) ( $atts['lines'] ?? 'true' ) ) );
+
+	$config = array(
+		'preset' => $preset,
+		'color'  => init_plugin_suite_fx_engine_sanitize_css_color( $atts['color'] ?? '' ),
+		'lines'  => ! in_array( $lines, array( 'false', '0', 'no', 'off' ), true ),
+		'hover'  => in_array( $hover, array( 'none', 'repulse', 'grab', 'bubble' ), true ) ? $hover : '',
+		'click'  => in_array( $click, array( 'none', 'push', 'remove' ), true ) ? $click : '',
+		'emoji'  => implode( ',', init_plugin_suite_fx_engine_parse_emoji_list( sanitize_text_field( (string) ( $atts['emoji'] ?? '' ) ) ) ),
+	);
+
+	if ( isset( $atts['speed'] ) && '' !== (string) $atts['speed'] ) {
+		$config['speed'] = max( 0.1, min( 20, (float) $atts['speed'] ) );
+	}
+
+	if ( isset( $atts['amount'] ) && (int) $atts['amount'] > 0 ) {
+		$config['amount'] = max( 5, min( 300, (int) $atts['amount'] ) );
+	}
+
+	/**
+	 * Filter the ambient particles config sent to fx-ambient.js.
+	 *
+	 * @param array $config Clean config.
+	 * @param array $atts   Raw attributes.
+	 */
+	return apply_filters( 'init_plugin_suite_fx_engine_ambient_config', $config, $atts );
+}
+
+/**
+ * Build the ambient particles layer markup and enqueue its scripts.
+ *
+ * @param array  $config  Config from init_plugin_suite_fx_engine_ambient_config().
+ * @param string $classes Extra CSS classes.
+ * @param string $style   Inline style.
+ * @return string
+ */
+function init_plugin_suite_fx_engine_ambient_layer( $config, $classes = '', $style = '' ) {
+	init_plugin_suite_fx_engine_register_ambient();
+	wp_enqueue_script( 'init-plugin-suite-fx-ambient' );
+
+	$classes = trim( 'init-fx-ambient ' . $classes );
+
+	return sprintf(
+		'<div id="%1$s" class="%2$s"%3$s data-fx-ambient="%4$s" aria-hidden="true"></div>',
+		esc_attr( wp_unique_id( 'init-fx-ambient-' ) ),
+		esc_attr( $classes ),
+		'' !== $style ? ' style="' . esc_attr( $style ) . '"' : '',
+		esc_attr( wp_json_encode( $config ) )
+	);
+}
+
+/**
+ * AMBIENT PARTICLES SHORTCODE (hậu cảnh hạt bay).
+ *
+ * @param array|string $atts          Shortcode attributes.
+ * @param string|null  $content       Enclosed content (unused).
+ * @param string       $shortcode_tag Shortcode tag.
+ * @return string
+ */
+function initfxen_render_ambient_shortcode( $atts, $content = null, $shortcode_tag = 'initfxen-fx-ambient' ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed -- Signature required by add_shortcode().
+	$atts = shortcode_atts(
+		array(
+			'ambient'         => '',
+			'color'           => '',
+			'lines'           => 'true',
+			'speed'           => '',
+			'amount'          => '',
+			'emoji'           => '',
+			'hover'           => '',
+			'click'           => '',
+			'container_style' => 'position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none; width: 100%; height: 100%;',
+			'container_class' => '',
+		),
+		$atts,
+		$shortcode_tag
+	);
+
+	if ( '' === trim( (string) $atts['ambient'] ) ) {
+		return '';
+	}
+
+	$class = '';
+	$style = '';
+
+	// Giữ hành vi cũ: có container_class thì không in style mặc định (để class tự định vị).
+	if ( '' !== trim( (string) $atts['container_class'] ) ) {
+		$class = implode( ' ', array_map( 'sanitize_html_class', preg_split( '/\s+/', trim( (string) $atts['container_class'] ) ) ) );
+	} else {
+		$style = (string) $atts['container_style'];
+	}
+
+	return init_plugin_suite_fx_engine_ambient_layer( init_plugin_suite_fx_engine_ambient_config( $atts ), $class, $style );
+}
+add_shortcode( 'initfxen-fx-ambient', 'initfxen_render_ambient_shortcode' ); // Slug mới (chính).
+add_shortcode( 'init-fx-ambient', 'initfxen_render_ambient_shortcode' ); // Slug cũ (compat).

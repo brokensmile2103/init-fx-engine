@@ -1,469 +1,66 @@
 <?php
 /**
  * Plugin Name: Init FX Engine
- * Description: Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!
+ * Description: Add interactive visual effects like fireworks, emoji rain, snowfall, particle backgrounds and seasonal holiday scenes — triggered by comments, keywords, blocks or holidays. Scripts only load on pages that actually use them. Make your WordPress site come alive!
  * Plugin URI: https://inithtml.com/plugin/init-fx-engine/
- * Version: 2.0.1
+ * Version: 2.0.2
  * Author: Init HTML
  * Author URI: https://inithtml.com/
  * Text Domain: init-fx-engine
  * Domain Path: /languages
  * Requires at least: 6.9
- * Tested up to: 7.1
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package Init_FX_Engine
  */
 
 defined( 'ABSPATH' ) || exit;
 
 // === DEFINE CONSTANTS ===
 
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION',        '2.0.1' );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG',           'init-fx-engine' );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION',         'init_plugin_suite_fx_engine_settings' );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL',            plugin_dir_url( __FILE__ ) );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_PATH',           plugin_dir_path( __FILE__ ) );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL',     INIT_PLUGIN_SUITE_FX_ENGINE_URL . 'assets/' );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_PATH',    INIT_PLUGIN_SUITE_FX_ENGINE_PATH . 'assets/' );
-define( 'INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH',  INIT_PLUGIN_SUITE_FX_ENGINE_PATH . 'includes/' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_VERSION', '2.0.2' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_SLUG', 'init-fx-engine' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_OPTION', 'init_plugin_suite_fx_engine_settings' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_URL', plugin_dir_url( __FILE__ ) );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_PATH', plugin_dir_path( __FILE__ ) );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL', INIT_PLUGIN_SUITE_FX_ENGINE_URL . 'assets/' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_PATH', INIT_PLUGIN_SUITE_FX_ENGINE_PATH . 'assets/' );
+define( 'INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH', INIT_PLUGIN_SUITE_FX_ENGINE_PATH . 'includes/' );
 
-// === LOAD SHORTCODES ===
+// === LOAD MODULES ===
 
+require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'assets.php';
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'shortcodes.php';
-require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-page.php';
-require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'blocks.php';
+require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'snowfall.php';
 require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'seasonal.php';
-require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-seasonal.php';
+require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'blocks.php';
 
-// === ENQUEUE JS ENGINE ===
-
-add_action( 'wp_enqueue_scripts', 'init_plugin_suite_fx_engine_enqueue_scripts' );
-function init_plugin_suite_fx_engine_enqueue_scripts() {
-    wp_enqueue_script(
-        'init-plugin-suite-fx-confetti',
-        INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/canvas-confetti.min.js',
-        [],
-        INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
-        true
-    );
-
-    wp_enqueue_script(
-        'init-plugin-suite-fx-engine',
-        INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-engine.js',
-        ['init-plugin-suite-fx-confetti'],
-        INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
-        true
-    );
-
-    $inlinefmt = get_option('init_plugin_suite_fx_engine_inlinefmt', [
-        'enabled' => true,
-    ]);
-
-    $i18n = [
-        'tap_to_reveal' => __('Tap to reveal', 'init-fx-engine'),
-    ];
-
-    wp_add_inline_script(
-        'init-plugin-suite-fx-engine',
-        'window.INIT_FX = window.INIT_FX || {};
-         window.INIT_FX.inlinefmt = ' . wp_json_encode($inlinefmt) . ';
-         window.INIT_FX.i18n = ' . wp_json_encode($i18n) . ';
-         window.INIT_FX.assets = ' . wp_json_encode(init_plugin_suite_fx_engine_lazy_assets()) . ';',
-        'before'
-    );
-
-    $raw_keywords = get_option('init_plugin_suite_fx_engine_keywords', []);
-    $raw_keywords = is_array($raw_keywords) ? $raw_keywords : [];
-    $mapped = [];
-
-    foreach ($raw_keywords as $effect => $raw) {
-        if (empty($raw)) continue;
-
-        if ($effect === 'emojiRain') {
-            $entries = array_map('trim', explode(',', $raw));
-            foreach ($entries as $entry) {
-                [$kw, $emoji] = array_pad(explode(':', $entry, 2), 2, null);
-                if ($kw) {
-                    $mapped[$effect][] = ['keyword' => $kw, 'emoji' => $emoji];
-                }
-            }
-        } else {
-            $words = array_map('trim', explode(',', $raw));
-            foreach ($words as $kw) {
-                if ($kw) {
-                    $mapped[$effect][] = ['keyword' => $kw];
-                }
-            }
-        }
-    }
-
-    // OK dùng localize cho data
-    wp_localize_script('init-plugin-suite-fx-engine', 'FX_KEYWORDS', $mapped);
+if ( is_admin() ) {
+	require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-page.php';
+	require_once INIT_PLUGIN_SUITE_FX_ENGINE_INCLUDES_PATH . 'settings-seasonal.php';
 }
-
-/**
- * Thư viện chỉ tải khi cần (lazy load) — fx-engine.js tự chèn <script> khi hiệu ứng được gọi.
- *
- * @return array
- */
-function init_plugin_suite_fx_engine_lazy_assets() {
-    return [
-        'fireworks' => INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fireworks.min.js?ver=' . rawurlencode( INIT_PLUGIN_SUITE_FX_ENGINE_VERSION ),
-    ];
-}
-
-/**
- * PRELOADER - Anti-flash solution (FIXED VERSION)
- * - Che content ngay từ đầu bằng CSS critical
- * - Preloader show immediately, content hidden cho đến khi ready
- * - Fixed z-index và visibility issues
- */
-add_action('wp_head', function () {
-    $preloader = get_option('init_plugin_suite_fx_engine_preloader', [
-        'enabled'      => false,
-        'style'        => 'dot',
-        'bg'           => '#ffffff',
-        'session_once' => false
-    ]);
-
-    if (empty($preloader['enabled'])) {
-        return;
-    }
-
-    $bg = esc_attr($preloader['bg']);
-    $bgCSS = strpos($bg, ',') !== false ? "linear-gradient(to right, {$bg})" : $bg;
-    
-    // Critical CSS để che content ngay lập tức - FIXED VERSION
-    ?>
-    <style id="init-fx-critical-preloader">
-        html.init-fx-preloading {
-            overflow: hidden !important;
-        }
-        
-        html.init-fx-preloading body {
-            overflow: hidden !important;
-            visibility: hidden !important;
-            transition: visibility 0.3s ease !important;
-        }
-        
-        html:not(.init-fx-preloading) body {
-            visibility: visible !important;
-        }
-        
-        html.init-fx-preloading #init-fx-preloader {
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        #init-fx-preloader {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: <?php echo esc_attr($bgCSS); ?> !important;
-            z-index: 999999999 !important; /* Fixed z-index */
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            visibility: hidden;
-            opacity: 1;
-            transition: opacity 0.8s cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0s linear 0.8s !important;
-        }
-        
-        html.init-fx-preloading #wpadminbar {
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-        }
-        
-        @keyframes preloaderFadeOut {
-            0% { 
-                opacity: 1;
-                visibility: visible;
-                transform: scale(1);
-            }
-            70% {
-                opacity: 0.3;
-                visibility: visible;
-                transform: scale(1.02);
-            }
-            100% { 
-                opacity: 0;
-                visibility: hidden;
-                transform: scale(1);
-            }
-        }
-        
-        #init-fx-preloader.fx-animate-out {
-            animation: preloaderFadeOut 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
-        }
-
-        #init-fx-preloader * {
-            z-index: inherit !important;
-        }
-    </style>
-    
-    <script>
-        (function() {
-            document.documentElement.classList.add('init-fx-preloading');
-            
-            window.INIT_FX = window.INIT_FX || {};
-            window.INIT_FX.preloader = <?php echo wp_json_encode($preloader); ?>;
-            
-            function createPreloaderImmediately() {
-                var container = document.body || document.documentElement;
-                
-                var existing = document.getElementById('init-fx-preloader');
-                if (!existing && container) {
-                    var preloader = document.createElement('div');
-                    preloader.id = 'init-fx-preloader';
-                    preloader.setAttribute('data-style', '<?php echo esc_js($preloader['style']); ?>');
-                    
-                    preloader.style.cssText = `
-                        position: fixed !important;
-                        top: 0 !important;
-                        left: 0 !important;
-                        width: 100vw !important;
-                        height: 100vh !important;
-                        background: <?php echo esc_js($bgCSS); ?> !important;
-                        z-index: 999999999 !important;
-                        display: flex !important;
-                        align-items: center !important;
-                        justify-content: center !important;
-                        visibility: visible !important;
-                        opacity: 1 !important;
-                    `;
-                    
-                    container.appendChild(preloader);
-                    return true;
-                }
-                return false;
-            }
-            
-            if (!createPreloaderImmediately()) {
-                var retryCount = 0;
-                var retryInterval = setInterval(function() {
-                    if (createPreloaderImmediately() || retryCount++ > 20) {
-                        clearInterval(retryInterval);
-                    }
-                }, 10);
-            }
-        })();
-    </script>
-    <?php
-}, 0); // Priority 0 để chạy đầu tiên
-
-// Enqueue JS để xử lý preloader animation
-add_action('wp_enqueue_scripts', function () {
-    $preloader = get_option('init_plugin_suite_fx_engine_preloader', [
-        'enabled'      => false,
-        'style'        => 'dot',
-        'bg'           => '#ffffff',
-        'session_once' => false, // thêm default luôn
-    ]);
-
-    if (empty($preloader['enabled'])) {
-        return;
-    }
-
-    wp_enqueue_script(
-        'init-plugin-suite-fx-preloader',
-        INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-preloader.js',
-        [],
-        INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
-        false // Load sớm ở header
-    );
-
-    // Truyền settings xuống JS
-    wp_add_inline_script(
-        'init-plugin-suite-fx-preloader',
-        'window.INIT_FX = window.INIT_FX || {};
-         window.INIT_FX.preloader = ' . wp_json_encode($preloader) . ';',
-        'before'
-    );
-});
-
-// Fallback nếu JS fail - auto remove preloader sau 3.5s
-add_action('wp_footer', function () {
-    $preloader = get_option('init_plugin_suite_fx_engine_preloader', [
-        'enabled' => false
-    ]);
-
-    if (empty($preloader['enabled'])) {
-        return;
-    }
-    
-    ?>
-    <script>
-        setTimeout(function() {
-            document.documentElement.classList.remove('init-fx-preloading');
-            var preloader = document.getElementById('init-fx-preloader');
-            var criticalCSS = document.getElementById('init-fx-critical-preloader');
-            
-            if (preloader) preloader.remove();
-            if (criticalCSS) criticalCSS.remove();
-        }, 3500);
-    </script>
-    <?php
-}, 999);
-
-/**
- * SNOWFALL
- */
-add_action('wp_enqueue_scripts', function () {
-    $snowfall = get_option('init_plugin_suite_fx_engine_snowfall', [
-        'enabled'       => false,
-        'mode'          => 'auto',
-        'custom_start'  => '',
-        'custom_end'    => '',
-        'homepage_only' => false,
-    ]);
-
-    // Không bật thì thôi
-    if (empty($snowfall['enabled'])) {
-        return;
-    }
-
-    // Nếu chọn chỉ chạy ở trang chủ → thoát nếu không phải homepage
-    // (static front page hoặc blog home — xem includes/seasonal.php)
-    if (!empty($snowfall['homepage_only']) && !init_plugin_suite_fx_engine_is_homepage_request()) {
-        return;
-    }
-
-    $should_run = false;
-    $today = current_time('Y-m-d');
-
-    if (($snowfall['mode'] ?? 'auto') === 'auto') {
-        $year       = current_time('Y');
-        $start      = "$year-12-20";
-        $end        = "$year-12-31";
-        $should_run = ($today >= $start && $today <= $end);
-    } elseif (($snowfall['mode'] ?? 'auto') === 'custom') {
-        $start = sanitize_text_field($snowfall['custom_start'] ?? '');
-        $end   = sanitize_text_field($snowfall['custom_end'] ?? '');
-        if ($start && $end) {
-            $should_run = ($today >= $start && $today <= $end);
-        }
-    }
-
-    if (!$should_run) {
-        return;
-    }
-
-    // Normalize + default
-    $snowfall = wp_parse_args($snowfall, [
-        'enabled'        => false,
-        'mode'           => 'auto',
-        'custom_start'   => '',
-        'custom_end'     => '',
-        'homepage_only'  => false,
-
-        // Snow settings
-        'amount'         => 80,
-        'size'           => 4,
-        'speed'          => 1.2,
-        'opacity'        => 0.6,
-    ]);
-
-    // Hard clamp
-    $snowfall['amount']  = max(20, min(200, (int) $snowfall['amount']));
-    $snowfall['size']    = max(1,  min(10,  (int) $snowfall['size']));
-    $snowfall['speed']   = max(0.3, min(5,  (float) $snowfall['speed']));
-    $snowfall['opacity'] = max(0.1, min(1,  (float) $snowfall['opacity']));
-
-    wp_enqueue_script(
-        'init-plugin-suite-fx-particles',
-        INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/particles.min.js',
-        [],
-        INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
-        true
-    );
-
-    wp_enqueue_script(
-        'init-plugin-suite-fx-snowfall',
-        INIT_PLUGIN_SUITE_FX_ENGINE_ASSETS_URL . 'js/fx-snowfall.js',
-        ['init-plugin-suite-fx-particles'],
-        INIT_PLUGIN_SUITE_FX_ENGINE_VERSION,
-        true
-    );
-
-    // Chỉ truyền những thứ frontend cần
-    $frontend_snowfall = [
-        'amount'  => $snowfall['amount'],
-        'size'    => $snowfall['size'],
-        'speed'   => $snowfall['speed'],
-        'opacity' => $snowfall['opacity'],
-    ];
-
-    wp_add_inline_script(
-        'init-plugin-suite-fx-snowfall',
-        'window.INIT_FX = window.INIT_FX || {}; window.INIT_FX.snowfall = ' . wp_json_encode($frontend_snowfall) . ';',
-        'before'
-    );
-});
-
-/**
- * GRAYSCALE
- * - Chuyển sang enqueue thay vì in thẳng <style>/<script> ở footer
- */
-add_action('wp_enqueue_scripts', function () {
-    $grayscale = get_option('init_plugin_suite_fx_engine_grayscale', [
-        'enabled'      => false,
-        'mode'         => 'off',
-        'custom_start' => '',
-        'custom_end'   => ''
-    ]);
-
-    if (empty($grayscale['enabled'])) {
-        return;
-    }
-
-    $today = current_time('Y-m-d');
-    $mode  = $grayscale['mode'] ?? 'off';
-    $should_run = false;
-
-    if ($mode === 'always') {
-        $should_run = true;
-    } elseif ($mode === 'custom') {
-        $start = sanitize_text_field($grayscale['custom_start'] ?? '');
-        $end   = sanitize_text_field($grayscale['custom_end'] ?? '');
-        if ($start && $end) {
-            $should_run = ($today >= $start && $today <= $end);
-        }
-    }
-
-    if (!$should_run) {
-        return;
-    }
-
-    // Tạo handle “ảo” để gắn inline CSS/JS
-    $handle = 'init-plugin-suite-fx-grayscale';
-
-    wp_register_style($handle, false, [], INIT_PLUGIN_SUITE_FX_ENGINE_VERSION);
-    wp_enqueue_style($handle);
-    wp_add_inline_style(
-        $handle,
-        'body.init-fx-grayscale{filter:grayscale(100%) !important;-webkit-filter:grayscale(100%) !important;}'
-    );
-
-    wp_register_script($handle, false, [], INIT_PLUGIN_SUITE_FX_ENGINE_VERSION, true);
-    wp_enqueue_script($handle);
-    wp_add_inline_script(
-        $handle,
-        'document.addEventListener("DOMContentLoaded",function(){document.body.classList.add("init-fx-grayscale");});'
-    );
-});
 
 // ==========================
 // Settings link
 // ==========================
 
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'init_plugin_suite_fx_engine_add_settings_link');
-// Add a "Settings" link to the plugin row in the Plugins admin screen
-function init_plugin_suite_fx_engine_add_settings_link($links) {
-    $settings_link = '<a href="' . admin_url('options-general.php?page=' . INIT_PLUGIN_SUITE_FX_ENGINE_SLUG) . '">' . __('Settings', 'init-fx-engine') . '</a>';
-    array_unshift($links, $settings_link);
-    return $links;
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'init_plugin_suite_fx_engine_add_settings_link' );
+/**
+ * Add a "Settings" link to the plugin row in the Plugins admin screen.
+ *
+ * @param array $links Existing action links.
+ * @return array
+ */
+function init_plugin_suite_fx_engine_add_settings_link( $links ) {
+	$settings_link = sprintf(
+		'<a href="%s">%s</a>',
+		esc_url( admin_url( 'options-general.php?page=' . INIT_PLUGIN_SUITE_FX_ENGINE_SLUG ) ),
+		esc_html__( 'Settings', 'init-fx-engine' )
+	);
+
+	array_unshift( $links, $settings_link );
+
+	return $links;
 }

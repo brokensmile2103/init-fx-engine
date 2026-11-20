@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Init FX Engine 2.0.1\n"
+"Project-Id-Version: Init FX Engine 2.0.2\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -13,218 +13,211 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Domain: init-fx-engine\n"
 
-#: includes/settings-form.php:40
-#: includes/settings-page.php:7
+#: includes/settings-form.php:49
+#: includes/settings-page.php:18
 msgid "Init FX Engine Settings"
 msgstr "Cài đặt Init FX Engine"
 
-#: init-fx-engine.php:466
+#: init-fx-engine.php:61
 msgid "Settings"
 msgstr "Cài đặt"
 
 #. Plugin Name of the plugin
 #: init-fx-engine.php
-#: includes/blocks.php:44
-#: includes/settings-page.php:8
+#: includes/blocks.php:40
+#: includes/settings-page.php:19
 msgid "Init FX Engine"
 msgstr "Init FX Engine"
 
-#: includes/settings-form.php:22
-#: assets/js/blocks-editor.js:25
+#: includes/settings-page.php:152
+#: assets/js/blocks-editor.js:33
 msgid "Firework"
 msgstr "Pháo hoa"
 
-#: includes/settings-form.php:23
-#: assets/js/blocks-editor.js:26
+#: includes/settings-page.php:153
+#: assets/js/blocks-editor.js:34
 msgid "Starlight Burst"
 msgstr "Bùng nổ sao"
 
-#: includes/settings-form.php:24
-#: assets/js/blocks-editor.js:27
+#: includes/settings-page.php:154
+#: assets/js/blocks-editor.js:35
 msgid "Emoji Rain"
 msgstr "Emoji rơi"
 
-#: includes/settings-form.php:24
+#: includes/settings-form.php:132
 msgid "Format: keyword:emoji, keyword:emoji"
 msgstr "Định dạng: từ khóa:emoji, từ khóa:emoji"
 
-#: includes/settings-form.php:25
-#: assets/js/blocks-editor.js:28
+#: includes/settings-page.php:155
+#: assets/js/blocks-editor.js:36
 msgid "Cannon Blast"
 msgstr "Phát pháo"
 
-#: includes/settings-form.php:26
-#: assets/js/blocks-editor.js:29
+#: includes/settings-page.php:156
+#: assets/js/blocks-editor.js:37
 msgid "Heart Rain"
 msgstr "Mưa trái tim"
 
-#: includes/settings-form.php:27
-#: assets/js/blocks-editor.js:30
+#: includes/settings-page.php:157
+#: assets/js/blocks-editor.js:38
 msgid "School Pride"
 msgstr "Niềm tự hào trường học"
 
-#: includes/settings-form.php:28
-#: assets/js/blocks-editor.js:31
+#: includes/settings-page.php:158
+#: assets/js/blocks-editor.js:39
 msgid "Celebration Burst"
 msgstr "Vụ nổ ăn mừng"
 
-#: includes/settings-form.php:118
+#: includes/settings-form.php:142
+#: includes/settings-form.php:165
 #: includes/settings-seasonal.php:58
 msgid "Preview"
 msgstr "Xem thử"
 
-#: includes/settings-form.php:138
+#: includes/settings-form.php:163
 msgid "Enable snowfall effect on site"
 msgstr "Bật hiệu ứng tuyết rơi trên trang"
 
-#: includes/settings-form.php:126
+#: includes/settings-form.php:151
 msgid "Snowfall Effect"
 msgstr "Hiệu ứng tuyết rơi"
 
-#: includes/settings-form.php:148
+#: includes/settings-form.php:174
 msgid "Auto schedule (Dec 20 – Dec 31)"
 msgstr "Tự động lên lịch (20/12 – 31/12)"
 
-#: includes/settings-form.php:153
-#: includes/settings-form.php:256
+#: includes/settings-form.php:179
+#: includes/settings-form.php:396
 #: includes/settings-seasonal.php:73
 msgid "Custom schedule"
 msgstr "Lịch tùy chỉnh"
 
-#: includes/settings-form.php:161
-#: includes/settings-form.php:264
+#: includes/settings-form.php:187
+#: includes/settings-form.php:409
 #: includes/settings-seasonal.php:86
 msgid "Start Date"
 msgstr "Ngày bắt đầu"
 
-#: includes/settings-form.php:165
-#: includes/settings-form.php:268
+#: includes/settings-form.php:191
+#: includes/settings-form.php:413
 #: includes/settings-seasonal.php:90
 msgid "End Date"
 msgstr "Ngày kết thúc"
 
-#: includes/settings-form.php:229
+#: includes/settings-form.php:369
 msgid "Grayscale (Turn off full page color)"
 msgstr "Grayscale (Tắt màu sắc toàn trang)"
 
-#: includes/settings-form.php:241
+#: includes/settings-form.php:381
 msgid "Enable grayscale effect on site"
 msgstr "Bật hiệu ứng grayscale trên trang"
 
-#: includes/settings-form.php:251
+#: includes/settings-form.php:391
 msgid "Always on"
 msgstr "Luôn bật"
 
-#: includes/settings-form.php:45
+#: includes/settings-form.php:65
 msgid "Preloader (Loading screen)"
 msgstr "Preloader (Màn hình tải)"
 
-#: includes/settings-form.php:57
+#: includes/settings-form.php:77
 msgid "Enable loading screen before page fully loads"
 msgstr "Bật màn hình tải trước khi trang tải hoàn tất"
 
-#: includes/settings-form.php:63
+#: includes/settings-form.php:83
 msgid "Style"
 msgstr "Kiểu dáng"
 
-#: includes/settings-form.php:77
+#: includes/settings-form.php:97
 msgid "Background Color"
 msgstr "Màu nền"
 
-#: includes/settings-form.php:83
+#: includes/settings-form.php:103
 msgid "Use a single color or comma-separated values for gradient."
 msgstr "Dùng một màu hoặc nhiều màu cách nhau bằng dấu phẩy để tạo gradient."
 
-#: includes/settings-form.php:93
+#: includes/settings-form.php:113
 msgid "Only show on first visit in a session"
 msgstr "Chỉ hiển thị ở lần truy cập đầu tiên trong phiên"
 
-#: includes/settings-form.php:277
+#: includes/settings-form.php:44
+#: includes/settings-form.php:422
 msgid "Inline Formatting"
 msgstr "Định dạng inline"
 
-#: includes/settings-form.php:289
+#: includes/settings-form.php:434
 msgid "Apply inline formatting in text"
 msgstr "Áp dụng định dạng inline trong văn bản"
 
-#: includes/settings-form.php:279
+#: includes/settings-form.php:424
 msgid "When enabled, the engine will parse simple inline markup in outputs."
 msgstr "Khi bật, engine sẽ phân tích cú pháp các ký hiệu inline đơn giản trong nội dung hiển thị."
 
-#: init-fx-engine.php:64
+#: includes/assets.php:190
 msgid "Tap to reveal"
 msgstr "Nhấn để hiển thị"
 
-#: includes/settings-form.php:178
+#: includes/settings-form.php:204
 msgid "Show snowfall effect on homepage only"
 msgstr "Chỉ hiển thị hiệu ứng tuyết rơi ở trang chủ"
 
-#: includes/settings-form.php:184
+#: includes/settings-form.php:222
 msgid "Snow amount"
 msgstr "Số lượng tuyết"
 
-#: includes/settings-form.php:195
+#: includes/settings-form.php:233
 msgid "Snow size"
 msgstr "Kích thước tuyết"
 
-#: includes/settings-form.php:205
+#: includes/settings-form.php:243
 msgid "Fall speed"
 msgstr "Tốc độ rơi"
 
-#: includes/settings-form.php:215
-#: includes/settings-seasonal.php:222
+#: includes/settings-form.php:253
+#: includes/settings-seasonal.php:244
 msgid "Opacity"
 msgstr "Độ trong suốt"
 
-#: includes/settings-form.php:190
+#: includes/settings-form.php:228
 msgid "Recommended: 60–100"
 msgstr "Khuyến nghị: 60–100"
 
-#: assets/js/blocks-editor.js:58
+#: assets/js/blocks-editor.js:87
 msgid "Button/Link Text"
 msgstr "Văn bản nút/link"
 
-#: assets/js/blocks-editor.js:86
+#: assets/js/blocks-editor.js:49
 msgid "Click"
 msgstr "Click"
 
-#: assets/js/blocks-editor.js:65
+#: assets/js/blocks-editor.js:95
 msgid "Effect"
 msgstr "Hiệu ứng"
 
-#: assets/js/blocks-editor.js:74
+#: assets/js/blocks-editor.js:105
 msgid "Emoji (for Emoji Rain)"
 msgstr "Emoji (dùng cho Emoji Rain)"
 
-#: assets/js/blocks-editor.js:56
+#: assets/js/blocks-editor.js:85
 msgid "FX Trigger Settings"
 msgstr "Cài đặt FX Trigger"
 
-#: assets/js/blocks-editor.js:94
+#: assets/js/blocks-editor.js:127
 msgid "HTML Tag"
 msgstr "Thẻ HTML"
 
-#: assets/js/blocks-editor.js:87
+#: assets/js/blocks-editor.js:50
 msgid "Hover"
 msgstr "Hover"
 
-#: assets/js/blocks-editor.js:83
+#: assets/js/blocks-editor.js:115
 msgid "Trigger On"
 msgstr "Kích hoạt khi"
-
-#: assets/js/blocks-editor.js:96
-msgid "e.g. a, button, span"
-msgstr "vd: a, button, span"
 
 #: blocks/fx-trigger/block.json
 msgctxt "block title"
 msgid "FX Trigger"
 msgstr "FX Trigger"
-
-#: blocks/fx-trigger/block.json
-msgctxt "block description"
-msgid "Insert a link or button that fires a visual effect (fireworks, emoji rain, etc.) on click or hover."
-msgstr "Chèn 1 link hoặc nút bấm kích hoạt hiệu ứng thị giác (pháo hoa, mưa emoji...) khi click hoặc hover."
 
 #: blocks/fx-trigger/block.json
 msgctxt "block keyword"
@@ -249,74 +242,71 @@ msgstr "init"
 #. Plugin URI of the plugin
 #: init-fx-engine.php
 msgid "https://inithtml.com/plugin/init-fx-engine/"
-msgstr ""
+msgstr "https://inithtml.com/plugin/init-fx-engine/"
 
 #. Author of the plugin
 #: init-fx-engine.php
 msgid "Init HTML"
-msgstr ""
+msgstr "Init HTML"
 
 #. Author URI of the plugin
 #: init-fx-engine.php
 msgid "https://inithtml.com/"
-msgstr ""
+msgstr "https://inithtml.com/"
 
-#: includes/seasonal.php:70
+#: includes/seasonal.php:77
 msgid "Halloween"
 msgstr "Halloween"
 
-#: includes/seasonal.php:77
+#: includes/seasonal.php:84
 msgid "Christmas"
 msgstr "Giáng sinh"
 
-#: includes/seasonal.php:84
+#: includes/seasonal.php:91
 msgid "New Year"
 msgstr "Năm mới"
 
-#: includes/seasonal.php:91
+#: includes/seasonal.php:98
 msgid "Lunar New Year (Tết)"
 msgstr "Tết Nguyên Đán"
 
-#: includes/seasonal.php:98
+#: includes/seasonal.php:105
 msgid "Valentine"
 msgstr "Valentine"
 
-#: includes/seasonal.php:105
+#: includes/seasonal.php:112
 msgid "Mid-Autumn Festival"
 msgstr "Tết Trung Thu"
 
-#: includes/settings-form.php:29
-#: assets/js/blocks-editor.js:32
+#: includes/settings-page.php:159
+#: assets/js/blocks-editor.js:40
 msgid "Halloween Burst"
 msgstr "Bùng nổ Halloween"
 
-#: includes/settings-form.php:30
-#: assets/js/blocks-editor.js:33
+#: includes/settings-page.php:160
+#: assets/js/blocks-editor.js:41
 msgid "Lucky Money (Tết)"
 msgstr "Lì xì ngày Tết"
 
-#: includes/settings-form.php:31
-#: assets/js/blocks-editor.js:34
+#: includes/settings-page.php:162
+#: assets/js/blocks-editor.js:43
 msgid "Fireworks Show"
 msgstr "Màn pháo hoa"
 
-#: includes/settings-form.php:32
-#: assets/js/blocks-editor.js:35
+#: includes/settings-page.php:163
+#: assets/js/blocks-editor.js:44
 msgid "Snow Burst"
 msgstr "Bung tuyết"
 
-#: includes/settings-form.php:33
-#: assets/js/blocks-editor.js:36
+#: includes/settings-page.php:164
+#: assets/js/blocks-editor.js:45
 msgid "Lantern Rise"
 msgstr "Đèn lồng bay"
 
+#: includes/settings-form.php:41
 #: includes/settings-seasonal.php:29
 msgid "Seasonal Effects"
 msgstr "Hiệu ứng theo mùa lễ hội"
-
-#: includes/settings-seasonal.php:31
-msgid "Holiday scenes floating over your site: Halloween bats, Tết blossoms and lucky money, Mid-Autumn lanterns, New Year fireworks and more."
-msgstr "Khung cảnh lễ hội bay lượn trên trang của bạn: dơi Halloween, hoa đào hoa mai và lì xì ngày Tết, đèn lồng Trung Thu, pháo hoa đêm Giao thừa và nhiều hơn nữa."
 
 #: includes/settings-seasonal.php:41
 msgid "Enable seasonal effects on site"
@@ -370,90 +360,90 @@ msgstr "Chỉ hiển thị hiệu ứng theo mùa ở trang chủ"
 msgid "Play a themed greeting effect once per visit (e.g. fireworks show on New Year, lucky money on Tết)"
 msgstr "Phát hiệu ứng chào mừng theo chủ đề một lần mỗi lượt truy cập (ví dụ: bắn pháo hoa dịp Năm mới, lì xì dịp Tết)"
 
-#: includes/settings-seasonal.php:178
+#: includes/settings-form.php:279
+#: includes/settings-seasonal.php:200
 msgid "Respect the visitor's \"reduce motion\" system setting"
 msgstr "Tôn trọng tùy chọn \"giảm chuyển động\" trên thiết bị của khách truy cập"
 
-#: includes/settings-seasonal.php:184
+#: includes/settings-seasonal.php:206
 msgid "Custom emojis"
 msgstr "Emoji tùy chỉnh"
 
-#: includes/settings-seasonal.php:189
-msgid "Optional. Comma-separated, up to 12 emojis. Leave empty to use the theme's own emojis."
-msgstr "Không bắt buộc. Phân tách bằng dấu phẩy, tối đa 12 emoji. Để trống để dùng emoji của chủ đề."
-
-#: includes/settings-seasonal.php:194
+#: includes/settings-form.php:314
+#: includes/settings-seasonal.php:216
 msgid "Amount"
 msgstr "Số lượng"
 
-#: includes/settings-seasonal.php:199
+#: includes/settings-seasonal.php:221
 msgid "Recommended: 20–40. Automatically reduced on small screens."
 msgstr "Khuyến nghị: 20–40. Tự động giảm trên màn hình nhỏ."
 
-#: includes/settings-seasonal.php:204
+#: includes/settings-seasonal.php:226
 msgid "Size (px)"
 msgstr "Kích thước (px)"
 
-#: includes/settings-seasonal.php:213
+#: includes/settings-form.php:318
+#: includes/settings-seasonal.php:235
 msgid "Speed"
 msgstr "Tốc độ"
 
-#: includes/settings-form.php:47
+#: includes/settings-form.php:67
 msgid "Show an animated loading screen until the page has fully loaded."
 msgstr "Hiển thị màn hình chờ có hiệu ứng cho tới khi trang tải xong."
 
-#: includes/settings-form.php:52
-#: includes/settings-form.php:133
-#: includes/settings-form.php:236
-#: includes/settings-form.php:284
+#: includes/settings-form.php:72
+#: includes/settings-form.php:158
+#: includes/settings-form.php:376
+#: includes/settings-form.php:429
 #: includes/settings-seasonal.php:36
 msgid "Enable"
 msgstr "Bật"
 
-#: includes/settings-form.php:88
+#: includes/settings-form.php:108
 msgid "Once per session"
 msgstr "Một lần mỗi phiên"
 
-#: includes/settings-form.php:100
+#: includes/settings-form.php:39
+#: includes/settings-form.php:120
 msgid "Keyword Effects"
 msgstr "Hiệu ứng theo từ khóa"
 
-#: includes/settings-form.php:102
+#: includes/settings-form.php:122
 msgid "Comma-separated keywords that turn into clickable effect triggers inside your content and comments. Use the Preview button to try each effect."
 msgstr "Các từ khóa phân tách bằng dấu phẩy sẽ trở thành liên kết kích hoạt hiệu ứng trong nội dung và bình luận. Bấm Xem trước để thử từng hiệu ứng."
 
-#: includes/settings-form.php:128
+#: includes/settings-form.php:153
 msgid "Gentle falling snow over the whole site, on an automatic or custom schedule."
 msgstr "Tuyết rơi nhẹ nhàng trên toàn trang, theo lịch tự động hoặc tùy chỉnh."
 
-#: includes/settings-form.php:143
-#: includes/settings-form.php:246
+#: includes/settings-form.php:169
+#: includes/settings-form.php:386
 #: includes/settings-seasonal.php:63
 msgid "Schedule"
 msgstr "Lịch chạy"
 
-#: includes/settings-form.php:159
-#: includes/settings-form.php:262
+#: includes/settings-form.php:185
+#: includes/settings-form.php:407
 #: includes/settings-seasonal.php:84
 msgid "Custom dates"
 msgstr "Ngày tùy chỉnh"
 
-#: includes/settings-form.php:168
-#: includes/settings-form.php:271
+#: includes/settings-form.php:194
+#: includes/settings-form.php:416
 #: includes/settings-seasonal.php:93
 msgid "Only used with the custom schedule."
 msgstr "Chỉ áp dụng khi chọn lịch tùy chỉnh."
 
-#: includes/settings-form.php:173
+#: includes/settings-form.php:199
 #: includes/settings-seasonal.php:151
 msgid "Homepage only"
 msgstr "Chỉ trang chủ"
 
-#: includes/settings-form.php:231
+#: includes/settings-form.php:371
 msgid "Turn the whole site black and white, for solemn occasions or national mourning."
 msgstr "Chuyển toàn bộ trang sang trắng đen, dùng cho các dịp trang nghiêm hoặc quốc tang."
 
-#: includes/settings-form.php:292
+#: includes/settings-form.php:437
 msgid "Supported: *bold*, `italic`, ~strike~, ^mark^, _highlight_, ||spoiler||"
 msgstr "Hỗ trợ: *đậm*, `nghiêng`, ~gạch ngang~, ^đánh dấu^, _tô sáng_, ||spoiler||"
 
@@ -465,11 +455,362 @@ msgstr "Xem trước dùng giá trị đang nhập trong form, không cần lưu
 msgid "Greeting effect"
 msgstr "Hiệu ứng chào mừng"
 
-#: includes/settings-seasonal.php:173
+#: includes/settings-form.php:274
+#: includes/settings-seasonal.php:195
 msgid "Accessibility"
 msgstr "Trợ năng"
 
 #. Description of the plugin
 #: init-fx-engine.php
-msgid "Add interactive visual effects like fireworks, emoji rain, snowfall and seasonal holiday scenes — triggered by comments, keywords, or holidays. Now with native Block Editor support. Make your WordPress site come alive!"
-msgstr "Thêm hiệu ứng trực quan sinh động như pháo hoa, mưa emoji, tuyết rơi và khung cảnh lễ hội theo mùa — được kích hoạt bởi bình luận, từ khóa hoặc dịp lễ. Hỗ trợ Block Editor gốc. Để trang WordPress của bạn trở nên sống động!"
+msgid "Add interactive visual effects like fireworks, emoji rain, snowfall, particle backgrounds and seasonal holiday scenes — triggered by comments, keywords, blocks or holidays. Scripts only load on pages that actually use them. Make your WordPress site come alive!"
+msgstr "Thêm hiệu ứng thị giác tương tác như pháo hoa, mưa emoji, tuyết rơi, nền hạt chuyển động và cảnh lễ hội theo mùa — kích hoạt qua bình luận, từ khóa, block hoặc ngày lễ. Script chỉ được tải ở trang thực sự dùng tới. Làm website WordPress của bạn sống động hơn!"
+
+#: includes/settings-form.php:20
+msgid "e.g. congratulations, well done"
+msgstr "vd: chúc mừng, giỏi quá"
+
+#: includes/settings-form.php:21
+msgid "e.g. superstar"
+msgstr "vd: ngôi sao"
+
+#: includes/settings-form.php:22
+msgid "e.g. go team"
+msgstr "vd: tuyệt vời"
+
+#: includes/settings-form.php:23
+msgid "e.g. hahaha:😂, xoxo:💋"
+msgstr "vd: hahaha:😂, xoxo:💋"
+
+#: includes/settings-form.php:24
+msgid "e.g. love you"
+msgstr "vd: yêu quá"
+
+#: includes/settings-form.php:25
+msgid "e.g. happy birthday"
+msgstr "vd: sinh nhật vui vẻ"
+
+#: includes/settings-form.php:26
+msgid "e.g. trick or treat"
+msgstr "vd: halloween"
+
+#: includes/settings-form.php:27
+msgid "e.g. lucky money"
+msgstr "vd: lì xì"
+
+#: includes/settings-form.php:28
+msgid "e.g. happy lunar new year"
+msgstr "vd: chúc mừng năm mới"
+
+#: includes/settings-form.php:29
+msgid "e.g. happy new year"
+msgstr "vd: năm mới"
+
+#: includes/settings-form.php:30
+msgid "e.g. merry christmas"
+msgstr "vd: giáng sinh"
+
+#: includes/settings-form.php:31
+msgid "e.g. mid-autumn"
+msgstr "vd: trung thu"
+
+#: includes/settings-form.php:32
+msgid "e.g. hooray"
+msgstr "vd: hoan hô"
+
+#: includes/settings-form.php:38
+msgid "Preloader"
+msgstr "Màn hình chờ"
+
+#: includes/settings-form.php:40
+msgid "Snowfall"
+msgstr "Tuyết rơi"
+
+#: includes/settings-form.php:42
+#: includes/settings-form.php:291
+msgid "Particle Backgrounds"
+msgstr "Nền hạt chuyển động"
+
+#: includes/settings-form.php:43
+msgid "Grayscale"
+msgstr "Trắng đen"
+
+#: includes/settings-form.php:124
+msgid "The effect scripts are only loaded when at least one keyword is set, or on pages that contain an FX shortcode or block."
+msgstr "Script hiệu ứng chỉ được tải khi có ít nhất một từ khóa, hoặc ở trang có shortcode / block FX."
+
+#: includes/settings-form.php:210
+msgid "Snow style"
+msgstr "Kiểu tuyết"
+
+#: includes/settings-form.php:214
+msgid "Soft dots (classic)"
+msgstr "Chấm tuyết mềm (cổ điển)"
+
+#: includes/settings-form.php:215
+msgid "Crystal snowflakes"
+msgstr "Bông tuyết pha lê"
+
+#: includes/settings-form.php:216
+msgid "Mixed"
+msgstr "Kết hợp"
+
+#: includes/settings-form.php:263
+msgid "Wind"
+msgstr "Gió"
+
+#: includes/settings-form.php:268
+msgid "Gentle wind gusts that slowly change direction"
+msgstr "Gió nhẹ, thỉnh thoảng đổi hướng"
+
+#: includes/settings-form.php:293
+msgid "Animated particle backgrounds powered by tsParticles. Add the \"FX Ambient Section\" block in the Block Editor, or build a shortcode below and paste it inside any section. Nothing here is saved — it is a live generator."
+msgstr "Nền hạt chuyển động dùng thư viện tsParticles. Thêm block \"FX Ambient Section\" trong Block Editor, hoặc tạo shortcode bên dưới rồi dán vào section bất kỳ. Phần này không lưu lại — chỉ là công cụ tạo shortcode xem trước trực tiếp."
+
+#: includes/settings-form.php:297
+#: assets/js/blocks-editor.js:231
+msgid "Preset"
+msgstr "Kiểu nền"
+
+#: includes/settings-form.php:307
+msgid "Color"
+msgstr "Màu"
+
+#: includes/settings-form.php:310
+#: assets/js/blocks-editor.js:243
+msgid "Leave empty to use the preset color."
+msgstr "Để trống để dùng màu mặc định của kiểu nền."
+
+#: includes/settings-form.php:322
+#: assets/js/blocks-editor.js:251
+msgid "Emojis"
+msgstr "Emoji"
+
+#: includes/settings-form.php:325
+msgid "Only for the \"Floating emoji\" preset."
+msgstr "Chỉ dùng cho kiểu \"Emoji bay lơ lửng\"."
+
+#: includes/settings-form.php:329
+#: assets/js/blocks-editor.js:292
+msgid "On hover"
+msgstr "Khi rê chuột"
+
+#: includes/settings-form.php:332
+#: includes/settings-form.php:344
+#: assets/js/blocks-editor.js:295
+#: assets/js/blocks-editor.js:310
+msgid "Preset default"
+msgstr "Theo kiểu nền"
+
+#: includes/settings-form.php:333
+#: includes/settings-form.php:345
+#: assets/js/blocks-editor.js:296
+#: assets/js/blocks-editor.js:311
+msgid "Nothing"
+msgstr "Không làm gì"
+
+#: includes/settings-form.php:334
+#: assets/js/blocks-editor.js:297
+msgid "Repulse"
+msgstr "Đẩy ra"
+
+#: includes/settings-form.php:335
+#: assets/js/blocks-editor.js:298
+msgid "Grab"
+msgstr "Nối dây"
+
+#: includes/settings-form.php:336
+#: assets/js/blocks-editor.js:299
+msgid "Bubble"
+msgstr "Phóng to"
+
+#: includes/settings-form.php:341
+#: assets/js/blocks-editor.js:307
+msgid "On click"
+msgstr "Khi bấm"
+
+#: includes/settings-form.php:346
+#: assets/js/blocks-editor.js:312
+msgid "Add particles"
+msgstr "Thêm hạt"
+
+#: includes/settings-form.php:347
+#: assets/js/blocks-editor.js:313
+msgid "Remove particles"
+msgstr "Bớt hạt"
+
+#: includes/settings-form.php:352
+msgid "Live preview"
+msgstr "Xem trước trực tiếp"
+
+#: includes/settings-form.php:358
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: includes/settings-form.php:361
+msgid "Copy"
+msgstr "Sao chép"
+
+#: includes/settings-form.php:362
+msgid "The parent element should have position: relative so the particles stay inside it."
+msgstr "Phần tử cha nên có position: relative để các hạt nằm gọn bên trong."
+
+#: includes/settings-form.php:401
+msgid "Paused (keep settings, do not apply)"
+msgstr "Tạm dừng (giữ cài đặt, không áp dụng)"
+
+#: includes/settings-form.php:440
+msgid "Spoilers are blurred until clicked. Short spoilers hide the \"Tap to reveal\" label automatically."
+msgstr "Spoiler được làm mờ cho tới khi bấm vào. Spoiler ngắn sẽ tự ẩn nhãn \"Nhấn để hiển thị\"."
+
+#: includes/settings-page.php:108
+msgid "Copied!"
+msgstr "Đã sao chép!"
+
+#: includes/settings-page.php:161
+#: assets/js/blocks-editor.js:42
+msgid "Blossom Rain (Tết)"
+msgstr "Mưa hoa đào mai (Tết)"
+
+#: includes/settings-seasonal.php:31
+msgid "Hand-drawn holiday scenes over your site: crystal snowflakes and string lights for Christmas, peach and apricot blossoms with lanterns for Tết, glowing lanterns under the full moon for Mid-Autumn, flapping bats and ghosts for Halloween, golden glitter and fireworks for New Year, and floating hearts for Valentine."
+msgstr "Cảnh lễ hội vẽ tay phủ lên website: bông tuyết pha lê và dây đèn cho Giáng sinh, hoa đào, hoa mai cùng đèn lồng cho Tết, đèn lồng lung linh dưới trăng rằm cho Trung Thu, dơi vỗ cánh và ma trôi cho Halloween, kim tuyến vàng và pháo hoa cho Năm mới, trái tim bay cho Valentine."
+
+#: includes/settings-seasonal.php:173
+msgid "Decorations"
+msgstr "Đồ trang trí"
+
+#: includes/settings-seasonal.php:178
+msgid "Show themed decorations along the top of the screen (Christmas string lights, Tết lanterns, Mid-Autumn moon, Halloween spider webs...)"
+msgstr "Hiện đồ trang trí theo chủ đề ở mép trên màn hình (dây đèn Giáng sinh, đèn lồng Tết, trăng rằm Trung Thu, mạng nhện Halloween...)"
+
+#: includes/settings-seasonal.php:184
+msgid "Interactive"
+msgstr "Tương tác"
+
+#: includes/settings-seasonal.php:189
+msgid "Burst of themed particles wherever visitors click or tap"
+msgstr "Bung hạt theo chủ đề tại chỗ khách truy cập bấm / chạm"
+
+#: includes/settings-seasonal.php:211
+msgid "Optional. Comma-separated, up to 12 emojis. When set, the scene uses only these emojis instead of the hand-drawn particles. Leave empty to use the theme's own scene."
+msgstr "Không bắt buộc. Cách nhau bằng dấu phẩy, tối đa 12 emoji. Khi nhập, cảnh lễ hội chỉ dùng các emoji này thay cho hình vẽ tay. Để trống để dùng cảnh mặc định của chủ đề."
+
+#: includes/shortcodes.php:118
+#: assets/js/blocks-editor.js:64
+msgid "Network links"
+msgstr "Mạng lưới kết nối"
+
+#: includes/shortcodes.php:119
+#: assets/js/blocks-editor.js:60
+msgid "Twinkling stars"
+msgstr "Sao lấp lánh"
+
+#: includes/shortcodes.php:120
+#: assets/js/blocks-editor.js:61
+msgid "Gentle snow"
+msgstr "Tuyết rơi nhẹ"
+
+#: includes/shortcodes.php:121
+#: assets/js/blocks-editor.js:62
+msgid "Rising bubbles"
+msgstr "Bong bóng bay lên"
+
+#: includes/shortcodes.php:122
+#: assets/js/blocks-editor.js:63
+msgid "Fireflies"
+msgstr "Đom đóm"
+
+#: includes/shortcodes.php:123
+#: assets/js/blocks-editor.js:65
+msgid "Floating emoji"
+msgstr "Emoji bay lơ lửng"
+
+#: assets/js/blocks-editor.js:51
+msgid "When scrolled into view"
+msgstr "Khi cuộn tới"
+
+#: assets/js/blocks-editor.js:52
+msgid "Immediately on page load"
+msgstr "Ngay khi tải trang"
+
+#: assets/js/blocks-editor.js:120
+msgid "The text is optional for this trigger."
+msgstr "Với kiểu kích hoạt này, nội dung chữ là không bắt buộc."
+
+#: assets/js/blocks-editor.js:196
+msgid "Your headline…"
+msgstr "Tiêu đề của bạn…"
+
+#: assets/js/blocks-editor.js:197
+msgid "Add any blocks on top of the animated background."
+msgstr "Thêm block bất kỳ phía trên nền chuyển động."
+
+#: assets/js/blocks-editor.js:229
+msgid "Particle Background"
+msgstr "Nền hạt"
+
+#: assets/js/blocks-editor.js:240
+msgid "Particle color"
+msgstr "Màu hạt"
+
+#: assets/js/blocks-editor.js:262
+msgid "Connect particles with lines"
+msgstr "Nối các hạt bằng đường kẻ"
+
+#: assets/js/blocks-editor.js:271
+msgid "Amount (0 = preset default)"
+msgstr "Số lượng (0 = theo kiểu nền)"
+
+#: assets/js/blocks-editor.js:281
+msgid "Speed (0 = preset default)"
+msgstr "Tốc độ (0 = theo kiểu nền)"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block title"
+msgid "FX Ambient Section"
+msgstr "Section nền hiệu ứng (FX Ambient)"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block description"
+msgid "A section with an animated particle background — twinkling stars, gentle snow, rising bubbles, fireflies, network links or floating emoji. Put any blocks inside."
+msgstr "Một section có nền hạt chuyển động — sao lấp lánh, tuyết rơi, bong bóng, đom đóm, mạng lưới hoặc emoji bay. Đặt block bất kỳ vào bên trong."
+
+#: blocks/fx-ambient/block.json
+msgctxt "block keyword"
+msgid "particles"
+msgstr "hạt"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block keyword"
+msgid "background"
+msgstr "nền"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block keyword"
+msgid "ambient"
+msgstr "ambient"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block keyword"
+msgid "snow"
+msgstr "tuyết"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block keyword"
+msgid "stars"
+msgstr "sao"
+
+#: blocks/fx-ambient/block.json
+msgctxt "block keyword"
+msgid "tsparticles"
+msgstr "tsparticles"
+
+#: blocks/fx-trigger/block.json
+msgctxt "block description"
+msgid "Insert a link or button that fires a visual effect (fireworks, emoji rain, etc.) on click, hover, when scrolled into view or right away."
+msgstr "Chèn liên kết hoặc nút kích hoạt hiệu ứng (pháo hoa, mưa emoji...) khi bấm, rê chuột, khi cuộn tới hoặc ngay lập tức."
+
+#: blocks/fx-trigger/block.json
+msgctxt "block keyword"
+msgid "confetti"
+msgstr "pháo giấy"

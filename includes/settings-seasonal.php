@@ -28,7 +28,7 @@ function init_plugin_suite_fx_engine_render_seasonal_settings( $seasonal ) {
 	<div id="init-fx-seasonal" class="fx-seasonal-settings">
 		<h2><?php esc_html_e( 'Seasonal Effects', 'init-fx-engine' ); ?></h2>
 		<p class="description">
-			<?php esc_html_e( 'Holiday scenes floating over your site: Halloween bats, Tết blossoms and lucky money, Mid-Autumn lanterns, New Year fireworks and more.', 'init-fx-engine' ); ?>
+			<?php esc_html_e( 'Hand-drawn holiday scenes over your site: crystal snowflakes and string lights for Christmas, peach and apricot blossoms with lanterns for Tết, glowing lanterns under the full moon for Mid-Autumn, flapping bats and ghosts for Halloween, golden glitter and fireworks for New Year, and floating hearts for Valentine.', 'init-fx-engine' ); ?>
 		</p>
 		<table class="form-table" role="presentation">
 			<tr>
@@ -163,8 +163,30 @@ function init_plugin_suite_fx_engine_render_seasonal_settings( $seasonal ) {
 				</th>
 				<td>
 					<label>
-						<input type="checkbox" name="<?php echo esc_attr( $field ); ?>[greeting]" id="init_fx_seasonal_greeting" value="1" <?php checked( ! empty( $seasonal['greeting'] ) ); ?>>
+						<input type="checkbox" class="fx-seasonal-greeting" name="<?php echo esc_attr( $field ); ?>[greeting]" id="init_fx_seasonal_greeting" value="1" <?php checked( ! empty( $seasonal['greeting'] ) ); ?>>
 						<?php esc_html_e( 'Play a themed greeting effect once per visit (e.g. fireworks show on New Year, lucky money on Tết)', 'init-fx-engine' ); ?>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<label for="init_fx_seasonal_decor"><?php esc_html_e( 'Decorations', 'init-fx-engine' ); ?></label>
+				</th>
+				<td>
+					<label>
+						<input type="checkbox" class="fx-seasonal-decor" name="<?php echo esc_attr( $field ); ?>[decor]" id="init_fx_seasonal_decor" value="1" <?php checked( ! empty( $seasonal['decor'] ) ); ?>>
+						<?php esc_html_e( 'Show themed decorations along the top of the screen (Christmas string lights, Tết lanterns, Mid-Autumn moon, Halloween spider webs...)', 'init-fx-engine' ); ?>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
+					<label for="init_fx_seasonal_interactive"><?php esc_html_e( 'Interactive', 'init-fx-engine' ); ?></label>
+				</th>
+				<td>
+					<label>
+						<input type="checkbox" class="fx-seasonal-interactive" name="<?php echo esc_attr( $field ); ?>[interactive]" id="init_fx_seasonal_interactive" value="1" <?php checked( ! empty( $seasonal['interactive'] ) ); ?>>
+						<?php esc_html_e( 'Burst of themed particles wherever visitors click or tap', 'init-fx-engine' ); ?>
 					</label>
 				</td>
 			</tr>
@@ -186,7 +208,7 @@ function init_plugin_suite_fx_engine_render_seasonal_settings( $seasonal ) {
 				<td>
 					<input type="text" class="regular-text fx-seasonal-emojis" name="<?php echo esc_attr( $field ); ?>[emojis]" id="init_fx_seasonal_emojis"
 						value="<?php echo esc_attr( $seasonal['emojis'] ); ?>" placeholder="🎃, 👻, 🦇">
-					<p class="description"><?php esc_html_e( 'Optional. Comma-separated, up to 12 emojis. Leave empty to use the theme\'s own emojis.', 'init-fx-engine' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Optional. Comma-separated, up to 12 emojis. When set, the scene uses only these emojis instead of the hand-drawn particles. Leave empty to use the theme\'s own scene.', 'init-fx-engine' ); ?></p>
 				</td>
 			</tr>
 			<tr>
