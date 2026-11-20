@@ -4,7 +4,7 @@ Tags: animation, effect, confetti, snow, particles
 Requires at least: 6.9
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,9 +54,15 @@ Since 2.0.2 the plugin only loads what the current page needs:
 - **fireworks-js**: lazy-loaded the first time a Fireworks Show actually runs
 - **Snowfall, Seasonal Effects, Preloader, Grayscale**: only when enabled and scheduled for today
 
-If your theme calls `FXEngine.trigger()` directly on pages without keywords or FX blocks, force the engine to load with:
+On every other page a tiny inline stub keeps `runEffect()` and `FXEngine.trigger()` available: the first call loads canvas-confetti and `fx-engine.js`, then plays the effect. Themes and plugins that fire effects from JavaScript (for example Init User Engine on check-in streaks, rewards and level-ups) work without any setup and without loading the engine on every page.
+
+To load the engine up front on every page instead, use:
 
 `add_filter( 'init_plugin_suite_fx_engine_load_engine', '__return_true' );`
+
+To remove the stub, use:
+
+`add_filter( 'init_plugin_suite_fx_engine_lazy_stub', '__return_false' );`
 
 == Block Editor (Gutenberg) ==
 
@@ -135,7 +141,7 @@ The settings page includes a shortcode generator with a live preview.
 Yes. Developers can hook into the engine via JavaScript or WordPress hooks.
 
 = Is the plugin heavy or slow? =  
-No. Since 2.0.2 every script is loaded only on pages that actually use it — a page without keywords, FX shortcodes/blocks or scheduled effects loads nothing from this plugin. See the "Smart Loading" section.
+No. Since 2.0.2 every script is loaded only on pages that actually use it — a page without keywords, FX shortcodes/blocks or scheduled effects only gets a tiny inline stub, and the engine is downloaded the first time an effect is actually triggered. See the "Smart Loading" section.
 
 = Can I use the effects outside of comments? =  
 Yes. Use the `[initfxen-fx]` shortcode, the FX Trigger block, or call `FXEngine.trigger('effect')` in JavaScript.
@@ -174,6 +180,12 @@ Yes. You can format text using simple markers:
 11. Lunar New Year (Tết) scene: swinging lanterns, peach and apricot blossoms, lucky-money envelopes, and blurred spoilers.
 
 == Changelog ==
+
+= 2.0.4 – November 20, 2026 =
+- **Fix**: effects fired from JavaScript with `runEffect()` or `FXEngine.trigger()` did nothing on pages without keyword effects, FX shortcodes or blocks, since Smart loading (2.0.2) no longer loaded the engine there. For example, Init User Engine's celebrations for 7-day and 30-day check-in streaks, claimed rewards and level-ups never played on sites with default settings
+- **New: On-demand engine** — pages without the engine get a tiny inline stub; the first `runEffect()` / `FXEngine.trigger()` call loads canvas-confetti and `fx-engine.js` once, then plays every queued effect. Pages that never trigger an effect download no extra files, and effects registered with `FXEngine.register()` before the engine loads are kept
+- **Developer**: new filter `init_plugin_suite_fx_engine_lazy_stub` to disable the stub; dynamically loaded scripts keep their version and go through `script_loader_src`, so CDN and optimization plugins still apply
+- **Readme**: "Smart Loading" section updated
 
 = 2.0.3 – November 20, 2026 =
 - **Snowfall: Classic round style is back as the default** — solid round flakes with random size and random opacity for depth, drifting down at slightly random angles, matching the look of the particles.js snowfall used before 2.0.2. Existing "dots" settings automatically use the classic look

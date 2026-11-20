@@ -9,6 +9,8 @@
  *   hoặc khi developer bật qua filter.
  * - fx-inline.js (định dạng nội tuyến + spoiler): file riêng, không cần confetti.
  * - Preloader / Grayscale: chỉ in ra khi được bật và đúng lịch.
+ * - Từ 2.0.4: trang chưa nạp engine có một stub nhỏ cho runEffect() / FXEngine.trigger();
+ *   lần gọi đầu tiên mới tải canvas-confetti + fx-engine.js rồi chạy hiệu ứng đang chờ.
  *
  * @package Init_FX_Engine
  */
@@ -132,6 +134,88 @@ function init_plugin_suite_fx_engine_register_engine() {
 function init_plugin_suite_fx_engine_enqueue_engine() {
 	init_plugin_suite_fx_engine_register_engine();
 	wp_enqueue_script( INIT_PLUGIN_SUITE_FX_ENGINE_HANDLE_ENGINE );
+}
+
+/**
+ * Build the public URL of a registered script, as WordPress would print it.
+ *
+ * Giữ đúng ?ver= và bộ lọc script_loader_src (CDN, plugin tối ưu) cho script được tải động.
+ *
+ * @param string $handle Registered script handle.
+ * @return string Empty string when the handle is not registered.
+ */
+function init_plugin_suite_fx_engine_script_url( $handle ) {
+	$scripts = wp_scripts();
+
+	if ( empty( $scripts->registered[ $handle ] ) || empty( $scripts->registered[ $handle ]->src ) ) {
+		return '';
+	}
+
+	$script = $scripts->registered[ $handle ];
+	$src    = $script->src;
+
+	if ( $script->ver ) {
+		$src = add_query_arg( 'ver', $script->ver, $src );
+	}
+
+	/** This filter is documented in wp-includes/class-wp-scripts.php */
+	return (string) apply_filters( 'script_loader_src', $src, $handle ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
+}
+
+add_action( 'wp_footer', 'init_plugin_suite_fx_engine_print_lazy_stub', 25 );
+/**
+ * Print a tiny runEffect() / FXEngine.trigger() stub on pages that did not load the engine.
+ *
+ * Smart loading (2.0.2) bỏ engine trên trang không có từ khóa / shortcode / block, nên code bên
+ * ngoài gọi runEffect() (vd. Init User Engine khi điểm danh, nhận quà, lên cấp) không chạy được.
+ * Stub xếp hàng các lần gọi, tải canvas-confetti + fx-engine.js ở lần gọi đầu tiên rồi chạy lại.
+ * fx-engine.js ghi đè runEffect / FXEngine khi nạp xong. Chạy sau khi script footer đã in (20).
+ *
+ * @return void
+ */
+function init_plugin_suite_fx_engine_print_lazy_stub() {
+	if ( wp_script_is( INIT_PLUGIN_SUITE_FX_ENGINE_HANDLE_ENGINE, 'done' ) || wp_script_is( INIT_PLUGIN_SUITE_FX_ENGINE_HANDLE_ENGINE, 'enqueued' ) ) {
+		return;
+	}
+
+	/**
+	 * Filter whether the on-demand runEffect() stub is printed on pages without the FX engine.
+	 *
+	 * @since 2.0.4
+	 *
+	 * @param bool $print Whether to print the stub. Default true.
+	 */
+	if ( ! apply_filters( 'init_plugin_suite_fx_engine_lazy_stub', true ) ) {
+		return;
+	}
+
+	init_plugin_suite_fx_engine_register_engine();
+
+	$config = array(
+		'confetti' => init_plugin_suite_fx_engine_script_url( INIT_PLUGIN_SUITE_FX_ENGINE_HANDLE_CONFETTI ),
+		'engine'   => init_plugin_suite_fx_engine_script_url( INIT_PLUGIN_SUITE_FX_ENGINE_HANDLE_ENGINE ),
+		'assets'   => init_plugin_suite_fx_engine_lazy_assets(),
+		'keywords' => (object) init_plugin_suite_fx_engine_get_keyword_map(),
+	);
+
+	if ( '' === $config['confetti'] || '' === $config['engine'] ) {
+		return;
+	}
+
+	$stub = '(function(w,d,c){'
+		. 'if(typeof w.runEffect==="function"){return;}'
+		. 'var q=[],state=0,fx=w.FXEngine=w.FXEngine||{},fx_effects=w.INIT_FX_EFFECTS=w.INIT_FX_EFFECTS||{};'
+		. 'function add(src,done){var s=d.createElement("script");s.src=src;s.async=false;s.onload=done;s.onerror=function(){state=0;q.length=0;};(d.body||d.head).appendChild(s);}'
+		. 'function flush(){state=2;if(w.runEffect===stub){q.length=0;return;}while(q.length){w.runEffect.apply(w,q.shift());}}'
+		. 'function load(){if(state){return;}state=1;w.INIT_FX=w.INIT_FX||{};w.INIT_FX.assets=w.INIT_FX.assets||c.assets;w.FX_KEYWORDS=w.FX_KEYWORDS||c.keywords;'
+		. 'var go=function(){add(c.engine,flush);};if(typeof w.confetti==="function"){go();}else{add(c.confetti,go);}}'
+		. 'function stub(){if(state===2){return;}q.push([].slice.call(arguments));load();}'
+		. 'w.runEffect=stub;fx.trigger=stub;'
+		. 'fx.register=fx.register||function(n,f){if(n&&typeof f==="function"){fx_effects[n]=f;}};'
+		. 'fx.effects=fx.effects||function(){return Object.keys(fx_effects);};'
+		. '})(window,document,' . wp_json_encode( $config ) . ');';
+
+	wp_print_inline_script_tag( $stub, array( 'id' => 'init-fx-engine-lazy-stub' ) );
 }
 
 /**
